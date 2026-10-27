@@ -1,0 +1,234 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const newsEntries = await getCollection('news');
+  return newsEntries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'news'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+// サイトURLと絶対URLの組み立て
+const siteUrl = Astro.site?.toString() ?? 'https://freerideworldtour.jp';
+const canonicalArticleURL = new URL(Astro.url.pathname, siteUrl).toString();
+const thumbnailURL = new URL(entry.data.thumbnail || '/img/og-main.jpg', siteUrl).toString();
+
+// 日付フォーマット (YYYY.MM.DD)
+const formatDate = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
+};
+
+// 構造化データ（NewsArticle + BreadcrumbList）
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    'headline': entry.data.title,
+    'description': entry.data.excerpt,
+    'image': [thumbnailURL],
+    'datePublished': entry.data.date.toISOString(),
+    'dateModified': entry.data.date.toISOString(),
+    'articleSection': entry.data.category,
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': canonicalArticleURL,
+    },
+    'author': {
+      '@type': 'Organization',
+      'name': 'FWT JAPAN SERIES',
+      'url': siteUrl,
+    },
+    'publisher': {
+      '@type': 'Organization',
+      'name': 'FWT JAPAN SERIES',
+      'logo': {
+        '@type': 'ImageObject',
+        'url': new URL('/img/apple-touch-icon.png', siteUrl).toString(),
+      },
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'HOME',
+        'item': '/',
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': 'ニュース',
+        'item': '/news/',
+      },
+      {
+        '@type': 'ListItem',
+        'position': 3,
+        'name': entry.data.title,
+        'item': canonicalArticleURL,
+      },
+    ],
+  },
+];
+---
+
+<Layout
+  title={entry.data.title}
+  description={entry.data.excerpt}
+  image={entry.data.thumbnail || '/img/news_hero.webp'}
+  type="article"
+  schema={schema}
+>
+  <!-- 共通サブヒーローセクション -->
+  <header class="relative w-full h-[240px] sm:h-[280px] md:h-[340px] overflow-hidden flex items-center justify-center text-center px-4">
+    <div class="absolute inset-0">
+      <img
+        src="/img/news_hero.webp"
+        alt="FWT JAPAN SERIES ニュース"
+        class="w-full h-full object-cover scale-105 transform-gpu"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        width="1920"
+        height="600"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-slate-950/90" aria-hidden="true"></div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+      <span class="inline-block text-xs sm:text-sm font-black tracking-widest text-red-500 uppercase mb-2 sm:mb-3 px-3 py-1 bg-black/60 border border-red-500/30 rounded-full backdrop-blur-sm">
+        News & Topics
+      </span>
+      <p class="font-extreme text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter uppercase m-0 leading-none drop-shadow-2xl">
+        NEWS
+      </p>
+    </div>
+  </header>
+
+  <!-- パンくずリストナビゲーション -->
+  <nav aria-label="パンくずリスト" class="border-b border-slate-200 bg-slate-50/90">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-3">
+      <ol class="flex items-center space-x-2 text-xs sm:text-sm text-slate-600">
+        <li>
+          <a
+            href="/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            HOME
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li>
+          <a
+            href="/news/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            ニュース
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li class="font-semibold text-slate-900 truncate max-w-[180px] sm:max-w-sm" aria-current="page">
+          {entry.data.title}
+        </li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- 記事メインコンテンツ -->
+  <main class="relative bg-white pt-10 sm:pt-14 pb-20 sm:pb-28 overflow-hidden border-b border-slate-200">
+    <article class="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
+      <!-- 記事ヘッダー -->
+      <header class="mb-10 sm:mb-12 border-b border-slate-200 pb-8 sm:pb-10">
+        <div class="flex flex-wrap items-center gap-3 sm:gap-4 mb-4">
+          <span class="bg-red-600 text-white font-mono text-[11px] sm:text-xs font-bold px-3 py-1 tracking-widest uppercase rounded-sm shadow-sm">
+            {entry.data.category}
+          </span>
+          <time
+            datetime={entry.data.date.toISOString()}
+            class="font-mono text-xs sm:text-sm font-bold text-slate-400 tracking-wider"
+          >
+            {formatDate(entry.data.date)}
+          </time>
+        </div>
+
+        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-tight tracking-tight mb-6">
+          {entry.data.title}
+        </h1>
+
+        {entry.data.excerpt && (
+          <p class="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
+            {entry.data.excerpt}
+          </p>
+        )}
+      </header>
+
+      <!-- アイキャッチ画像 -->
+      {entry.data.thumbnail && (
+        <figure class="mb-10 sm:mb-12 overflow-hidden rounded-2xl border border-slate-200 shadow-md">
+          <img
+            src={entry.data.thumbnail}
+            alt={entry.data.title}
+            class="w-full aspect-[16/9] object-cover"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            width="1280"
+            height="720"
+          />
+        </figure>
+      )}
+
+      <!-- マークダウン本文 -->
+      <div
+        class="prose prose-slate prose-lg md:prose-xl max-w-none
+               prose-headings:font-black prose-headings:tracking-tight prose-headings:text-slate-900
+               prose-h2:border-b prose-h2:border-slate-200 prose-h2:pb-4 prose-h2:mt-12 prose-h2:text-2xl md:prose-h2:text-3xl
+               prose-h3:mt-8 prose-h3:text-xl md:prose-h3:text-2xl
+               prose-a:text-red-600 prose-a:font-semibold prose-a:no-underline hover:prose-a:text-red-700 hover:prose-a:underline focus-visible:prose-a:outline-none focus-visible:prose-a:ring-2 focus-visible:prose-a:ring-red-500 rounded-sm
+               prose-strong:text-slate-900 prose-strong:font-bold
+               prose-img:mx-auto prose-img:rounded-2xl prose-img:shadow-xl
+               prose-table:text-sm md:prose-table:text-base prose-th:bg-slate-100 prose-th:p-3 prose-td:p-3"
+      >
+        <Content />
+      </div>
+
+      <!-- 戻るリンク・フッターナビゲーション -->
+      <footer class="mt-16 sm:mt-20 pt-8 sm:pt-10 border-t border-slate-200 flex justify-center">
+        <a
+          href="/news/"
+          class="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-xs sm:text-sm font-bold tracking-widest text-slate-700 hover:text-white uppercase bg-slate-100 hover:bg-slate-900 border border-slate-200 hover:border-slate-900 rounded-full transition-all duration-300 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+        >
+          <svg
+            class="w-4 h-4 rotate-180"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+          ニュース一覧に戻る
+        </a>
+      </footer>
+    </article>
+  </main>
+</Layout>

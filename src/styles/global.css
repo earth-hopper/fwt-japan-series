@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.font-display {
+    font-family: 'Cardo', sans-serif;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}

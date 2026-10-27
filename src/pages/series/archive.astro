@@ -1,0 +1,288 @@
+---
+import Layout from '../../layouts/Layout.astro';
+// ※ファイルの配置場所に合わせてJSONのパスを調整してください（例: ../../data/archive.json）
+import archiveData from '../../data/archive.json';
+
+interface ArchiveResult {
+  division: string;
+  first: string;
+  second: string;
+  third: string;
+}
+
+interface ArchiveEvent {
+  name: string;
+  venue: string;
+  grade: string;
+  date: string;
+  results: ArchiveResult[];
+}
+
+interface RawArchiveRecord {
+  event: string;
+  name: string;
+  venue: string;
+  grade: string;
+  date: string;
+  division: string;
+  first: string;
+  second: string;
+  third: string;
+}
+
+const pageTitle = "アーカイブ";
+const pageDescription = "FWT JAPAN SERIESの過去の大会アーカイブ一覧。白馬やロッテアライリゾートなど、各シーズンで開催された大会の会場情報と、各種目（スキー・スノーボード男女）における表彰者・リザルトを年別に掲載しています。";
+const ogImage = "/img/series_hero.webp";
+
+// サイトURLの組み立て（schema生成用）
+const siteUrl = Astro.site?.toString() ?? "https://freerideworldtour.jp";
+const pageUrl = new URL(Astro.url.pathname, siteUrl).toString();
+
+const rawData = (archiveData as RawArchiveRecord[]) || [];
+
+// データを年別 > 大会別にグループ化
+const eventsByYear = rawData.reduce<Record<string, Record<string, ArchiveEvent>>>((acc, curr) => {
+  // 日付（"2024" や "2024-02-03"）から年を抽出
+  const year = String(curr.date).substring(0, 4);
+  
+  if (!acc[year]) acc[year] = {};
+  if (!acc[year][curr.event]) {
+    acc[year][curr.event] = {
+      name: curr.name,
+      venue: curr.venue,
+      grade: curr.grade,
+      date: curr.date,
+      results: []
+    };
+  }
+  
+  acc[year][curr.event].results.push({
+    division: curr.division,
+    first: curr.first,
+    second: curr.second,
+    third: curr.third
+  });
+  
+  return acc;
+}, {});
+
+// 年を降順（最新順）にソート
+const sortedYears = Object.keys(eventsByYear).sort((a, b) => Number(b) - Number(a));
+
+// 構造化データ（BreadcrumbList + CollectionPage）
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": pageTitle,
+    "description": pageDescription,
+    "url": pageUrl
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "HOME",
+        "item": "/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "大会日程",
+        "item": "/series/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": pageTitle,
+        "item": pageUrl
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  image={ogImage}
+  type="website"
+  schema={schema}
+>
+  <!-- ヒーローセクション（他ページとレイアウト・余白・ブランドデザインを統一） -->
+  <header class="relative w-full h-[280px] sm:h-[320px] md:h-[400px] overflow-hidden flex items-center justify-center text-center px-4">
+    <div class="absolute inset-0">
+      <img
+        src={ogImage}
+        alt="FWT JAPAN SERIES 過去の大会風景"
+        class="w-full h-full object-cover scale-105 transform-gpu"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        width="1920"
+        height="800"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-slate-950/90" aria-hidden="true"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+      <span class="inline-block text-xs sm:text-sm font-black tracking-widest text-red-500 uppercase mb-3 px-3 py-1 bg-black/60 border border-red-500/30 rounded-full backdrop-blur-sm">
+        Past Events & Results
+      </span>
+      <h1 class="font-extreme text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter uppercase m-0 leading-none drop-shadow-2xl">
+        ARCHIVE
+      </h1>
+      <p class="mt-3 text-sm sm:text-base md:text-lg font-bold text-slate-200 tracking-wider">
+        過去の大会・リザルト一覧
+      </p>
+    </div>
+  </header>
+
+  <!-- パンくずリストナビゲーション -->
+  <nav aria-label="パンくずリスト" class="border-b border-slate-200 bg-slate-50/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16 py-3">
+      <ol class="flex items-center space-x-2 text-xs sm:text-sm text-slate-600">
+        <li>
+          <a
+            href="/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            HOME
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li>
+          <a
+            href="/series/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            大会日程
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li class="font-semibold text-slate-900 truncate" aria-current="page">
+          {pageTitle}
+        </li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- アーカイブリスト本体 -->
+  <main class="relative bg-white pt-12 md:pt-16 pb-24 md:pb-32 overflow-hidden border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16">
+
+      <!-- 年ごとのリスト生成 -->
+      {sortedYears.map((year) => {
+        const events = Object.values(eventsByYear[year] ?? {});
+        return (
+          <section aria-labelledby={`heading-year-${year}`} class="mb-20 md:mb-24">
+            
+            <!-- 年の見出し -->
+            <div class="flex items-end justify-between border-b-2 border-slate-900 pb-4 mb-6">
+              <div>
+                <span class="font-mono text-[10px] sm:text-xs font-bold text-red-600 tracking-[0.25em] uppercase block mb-1">
+                  Season Results
+                </span>
+                <h2
+                  id={`heading-year-${year}`}
+                  class="font-extreme text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight uppercase leading-none m-0"
+                >
+                  {year} SEASON
+                </h2>
+              </div>
+              <span class="font-mono text-xs md:text-sm text-slate-400 font-bold">
+                {events.length} EVENTS
+              </span>
+            </div>
+
+            <!-- アコーディオン型イベントリスト -->
+            <div class="space-y-4">
+              {events.map((event) => (
+                <details class="group bg-white border border-slate-200 rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden shadow-sm hover:shadow-md transition-shadow">
+                  
+                  <!-- 常に表示されるヘッダー部分（クリック可能） -->
+                  <summary class="flex items-center justify-between p-5 sm:p-6 cursor-pointer hover:bg-slate-50 transition-colors list-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-red-500">
+                    <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-8 w-full">
+                      
+                      <!-- 日付 -->
+                      <div class="font-mono text-xs sm:text-sm font-semibold text-slate-500 md:w-36 flex-shrink-0 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-red-600 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                          <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+                        </svg>
+                        <time datetime={event.date}>{event.date}</time>
+                      </div>
+                      
+                      <!-- 大会情報 -->
+                      <div class="flex-1">
+                        <h3 class="font-extreme text-lg sm:text-xl md:text-2xl font-black text-slate-900 uppercase leading-snug mb-2.5 group-hover:text-red-600 transition-colors m-0">
+                          {event.name}
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded border border-slate-200 uppercase tracking-wider">
+                            <svg class="w-3.5 h-3.5 text-slate-500 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            {event.venue}
+                          </span>
+                          <span class="text-[10px] sm:text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded border border-red-200 tracking-widest">
+                            {event.grade}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 展開アイコン -->
+                    <div class="ml-4 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-300" aria-hidden="true">
+                      <svg class="w-6 h-6 group-hover:text-red-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </div>
+                  </summary>
+
+                  <!-- 展開されるリザルト部分（4列グリッド） -->
+                  <div class="p-5 sm:p-6 border-t border-slate-200 bg-slate-50/80">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                      {event.results.map((res) => (
+                        <div class="flex flex-col">
+                          <strong class="block text-slate-900 border-b-2 border-slate-200 pb-1.5 mb-4 text-[11px] sm:text-xs font-black uppercase tracking-widest">
+                            {res.division}
+                          </strong>
+                          <ol class="space-y-3 m-0 p-0 list-none text-sm text-slate-700">
+                            {res.first && (
+                              <li class="flex items-start gap-3">
+                                <span class="font-mono text-amber-500 font-bold w-4 text-right flex-shrink-0 mt-0.5" aria-label="1位">1</span> 
+                                <span class="font-bold text-slate-900 leading-snug">{res.first}</span>
+                              </li>
+                            )}
+                            {res.second && (
+                              <li class="flex items-start gap-3">
+                                <span class="font-mono text-slate-500 font-bold w-4 text-right flex-shrink-0 mt-0.5" aria-label="2位">2</span> 
+                                <span class="font-medium leading-snug">{res.second}</span>
+                              </li>
+                            )}
+                            {res.third && (
+                              <li class="flex items-start gap-3">
+                                <span class="font-mono text-amber-700 font-bold w-4 text-right flex-shrink-0 mt-0.5" aria-label="3位">3</span> 
+                                <span class="font-medium leading-snug">{res.third}</span>
+                              </li>
+                            )}
+                          </ol>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                </details>
+              ))}
+            </div>
+
+          </section>
+        );
+      })}
+
+    </div>
+  </main>
+</Layout>

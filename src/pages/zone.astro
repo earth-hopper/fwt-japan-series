@@ -1,0 +1,346 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const pageTitle = "体験しよう (ZONE FWT)";
+const pageDescription = "フリーライドスキー・スノーボードの魅力を体感できる、FWT JAPAN公認のフリーライド向けコース「ZONE FWT」を紹介しています。全国のスキー場にある自然地形コース一覧。";
+const ogImage = "/img/zone_hero.webp";
+
+const siteUrl = Astro.site?.toString() ?? "https://freerideworldtour.jp";
+const pageUrl = new URL(Astro.url.pathname, siteUrl).toString();
+
+// ---------------------------------------------------------
+// ZONE FWT コースデータ（HTMLのベタ書きを排除し保守性を向上）
+// ---------------------------------------------------------
+const courses = [
+  {
+    id: "kamui-skilinks",
+    pref: "北海道",
+    city: "旭川市",
+    number: "01",
+    name: "カムイスキーリンクス",
+    course: "ディープパウダーコース",
+    slope: "800m / 32°",
+    image: "/img/zone_kamui.webp",
+    desc: "旭川の極上パウダーが楽しみながらオープンバーンとツリーランを同じ１本のランで楽しめる数少ないコース設計でFREERIDEが体感できる。"
+  },
+  {
+    id: "oze-iwakura",
+    pref: "群馬県",
+    city: "利根郡",
+    number: "04",
+    name: "ホワイトワールド尾瀬岩鞍",
+    course: "エキスパートコース（上部）",
+    slope: "250m / 40°",
+    image: "/img/zone_ozeiwakura.webp",
+    desc: "幅広で遮るもののないコースは縦横無尽な滑走が可能。急斜だがうねりも少なく、FREERIDEとしての経験値を積むのに最適。"
+  },
+  {
+    id: "k-hotaka",
+    pref: "群馬県",
+    city: "利根郡",
+    number: "05",
+    name: "オグナほたかスキー場",
+    course: "トレーニングコース",
+    slope: "400m / 30°",
+    image: "/img/zone_oguna.webp",
+    desc: "リフトからのアクセスが大変良く、体力を削られずに何度でも楽しめる。ZONE FWTの中では比較的滑りやすいので、ここからFREERIDEへの第一歩を踏み出そう。"
+  },
+  {
+    id: "maiko-resort",
+    pref: "新潟県",
+    city: "南魚沼市",
+    number: "06",
+    name: "舞子スノーリゾート",
+    course: "チャンピオンコース",
+    slope: "120m / 30°",
+    image: "/img/zone_maiko.webp",
+    desc: "過去にはFWT Qualifier 1*を実施していた斜面であり、フリーライドデビューに好条件な斜面。ぜひフリーライドを体感したことがない方に訪れてほしい。"
+  },
+  {
+    id: "yuzawa-nakazato",
+    pref: "新潟県",
+    city: "南魚沼郡",
+    number: "07",
+    name: "湯沢中里スノーリゾート",
+    course: "チャレンジバーン",
+    slope: "370m / 32°",
+    image: "/img/zone_nakazato.webp",
+    desc: "滑り切った後に自分のラインがどこを通ったのかが分かりやすい斜面。複数設置されたナチュラルヒットアイテムにより、チャレンジ精神をくすぐられるレイアウトとなっている。"
+  },
+  {
+    id: "arai-resort",
+    pref: "新潟県",
+    city: "妙高市",
+    number: "08",
+    name: "アライスノーリゾート",
+    course: "マムシ",
+    slope: "720m / 30°",
+    image: "/img/zone_arai.webp",
+    desc: "FWT Qualifier 3*開催地をリフトで回せるという例のない環境。マップ上は小さなコースに見えるが、足を運ぶと想像以上に大きなフェイスが待っている。"
+  },
+  {
+    id: "ryuoo",
+    pref: "長野県",
+    city: "北志​賀",
+    number: "09",
+    name: "竜王スキーパーク",
+    course: "木落しBowl a",
+    slope: "1,410m / 23°",
+    image: "/img/zone_kv.webp",
+    desc: "言わずと知れた名物コースに新たなツリーランコースが誕生！サーフライドが楽しめる沢地形エリアもあり波乗り感覚で自由なラインを描けるので、何度でも違った遊び方が可能。"
+  },
+  {
+    id: "ontakeskijo",
+    pref: "長野県",
+    city: "木曽郡",
+    number: "10",
+    name: "御嶽スキー場",
+    course: "チャンピオンゲレンデ",
+    slope: "1,500m / 30°",
+    image: "/img/zone_ontake.webp",
+    desc: "10年ぶりに復活した旧ゲレンデ、BCデビューを考える方におすすめ。現在はリフトが稼働していないが、バスで送迎してくれる高待遇でコンペティターの気分に。"
+  },
+  {
+    id: "takawashi",
+    pref: "岐阜県",
+    city: "郡上市",
+    number: "11",
+    name: "高鷲スノーパーク",
+    course: "チャンピオンコース",
+    slope: "2,250m / 40°",
+    image: "/img/zone_takasu.webp",
+    desc: "未圧雪・コブ斜面。コースはうねっており非常に難しい。ゲレンデのもっとも南に位置し、日当たりの影響で雪質も刻一刻と変化する。初級者は絶対に立ち入らないよう要注意！"
+  },
+  {
+    id: "hachi-hachikita",
+    pref: "兵庫県",
+    city: "美方郡",
+    number: "12",
+    name: "ハチ・ハチ北スキー場",
+    course: "FWT ZONE NATURE",
+    slope: "300m / 35°",
+    image: "/img/zone_hachi.webp",
+    desc: "関西No.1ゲレンデ規模ながら、雪面コンディションが著しく変化することを予測してドロップする場所を選ぶ。これもFREERIDEの醍醐味である。"
+  },
+  {
+    id: "osorakan",
+    pref: "広島県",
+    city: "山県郡",
+    number: "13",
+    name: "恐羅漢スノーパーク",
+    course: "砥石郷コース",
+    slope: "600m / 38°",
+    image: "/img/zone_osorakan.webp",
+    desc: "山陽の中でも特に自然降雪に恵まれ、山の規模感もFREERIDEを楽しむには文句なし。コース途中から片斜面でのトラバースを意識してコースバックしよう。"
+  }
+];
+
+// 構造化データ（BreadcrumbList + CollectionPage）
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": pageTitle,
+    "description": pageDescription,
+    "url": pageUrl
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "HOME",
+        "item": "/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "体験しよう (ZONE FWT)",
+        "item": pageUrl
+      }
+    ]
+  }
+];
+---
+
+<Layout 
+  title="体験しよう"
+  description={pageDescription}
+  image={ogImage}
+  type="website"
+  schema={schema}
+>
+  <!-- ヒーローセクション（LCP最適化） -->
+  <header class="relative w-full h-[280px] sm:h-[320px] md:h-[400px] overflow-hidden flex items-center justify-center text-center px-4">
+    <div class="absolute inset-0">
+      <img
+        src={ogImage}
+        alt="雪山のパウダーランやツリーランを楽しむフリーライドの魅力"
+        class="w-full h-full object-cover scale-105 transform-gpu"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        width="1920"
+        height="800"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-slate-950/90" aria-hidden="true"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+      <span class="inline-block text-xs sm:text-sm font-black tracking-widest text-red-500 uppercase mb-3 px-3 py-1 bg-black/60 border border-red-500/30 rounded-full backdrop-blur-sm">
+        Zone & Experience
+      </span>
+      <h1 class="font-extreme text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter uppercase m-0 leading-none drop-shadow-2xl">
+        ZONE FWT
+      </h1>
+      <p class="mt-3 text-sm sm:text-base md:text-lg font-bold text-slate-200 tracking-wider">
+        全国の公認フリーライドコース
+      </p>
+    </div>
+  </header>
+
+  <!-- パンくずリストナビゲーション -->
+  <nav aria-label="パンくずリスト" class="border-b border-slate-200 bg-slate-50/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16 py-3">
+      <ol class="flex items-center space-x-2 text-xs sm:text-sm text-slate-600">
+        <li>
+          <a
+            href="/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            HOME
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li class="font-semibold text-slate-900 truncate" aria-current="page">
+          体験しよう
+        </li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- イントロダクションセクション -->
+  <section aria-labelledby="heading-intro" class="relative bg-slate-50 py-16 md:py-24 lg:py-32 overflow-hidden border-b border-slate-200">
+    <!-- 背景のタイポグラフィ装飾 -->
+    <div class="absolute top-1/2 left-0 -translate-y-1/2 whitespace-nowrap pointer-events-none opacity-[0.03] select-none" aria-hidden="true">
+      <span class="font-extreme text-[40vw] font-black text-slate-900 leading-none">ZONE</span>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16 relative z-10">
+      <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        
+        <div class="w-full lg:w-5/12 order-2 lg:order-1">
+          <span class="font-mono text-[10px] md:text-xs text-red-600 font-bold tracking-[0.4em] uppercase block mb-4">Introduction</span>
+          <h2 id="heading-intro" class="font-extreme text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-6">
+            どう攻める？
+          </h2>
+          <div class="w-12 h-1.5 bg-slate-900 mb-8" aria-hidden="true"></div>
+          <p class="text-slate-600 font-medium text-sm sm:text-base md:text-lg leading-relaxed mb-5">
+            ZONE FWT はフリーライドコンペティション最高峰のFWTがセレクトしたスキー場コース。過去大会を開催した斜面や大会開催基準をクリアした斜面を選定しています。
+          </p>
+          <p class="text-slate-600 font-medium text-sm sm:text-base md:text-lg leading-relaxed m-0">
+            全国各地に点在するZONE FWTを滑り込み、自然地形を滑るフリーライディングを体感しよう！
+          </p>
+        </div>
+
+        <div class="w-full lg:w-7/12 order-1 lg:order-2">
+          <figure class="relative shadow-2xl overflow-hidden rounded-sm group m-0 bg-slate-200">
+            <img 
+              src="/img/zone_kv.webp" 
+              alt="ZONE FWT公認コースでのフリーライドイメージ" 
+              class="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-1000 ease-out"
+              loading="lazy"
+              decoding="async"
+              width="1200"
+              height="800"
+            >
+            <div class="absolute bottom-0 left-0 w-full h-1.5 bg-red-600 opacity-90" aria-hidden="true"></div>
+          </figure>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- コース一覧セクション -->
+  <main class="py-20 md:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16">
+      
+      <!-- セクション見出し -->
+      <header class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4 md:gap-6 border-b-2 border-slate-900 pb-6">
+        <h2 class="font-extreme text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase m-0 leading-none">
+          #Dropin
+        </h2>
+        <span class="font-mono text-[10px] sm:text-xs md:text-sm text-red-600 font-bold tracking-[0.3em] uppercase sm:text-right">
+          The Selection
+        </span>
+      </header>
+
+      <!-- 注意事項 -->
+      <section aria-label="注意事項" class="bg-slate-50 border border-slate-200 p-8 md:p-12 text-left mb-16 md:mb-24 rounded-sm">
+        <div class="flex items-center gap-3 sm:gap-4 mb-5">
+          <svg class="w-8 h-8 sm:w-10 sm:h-10 text-red-600 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+          </svg>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-widest m-0">Precautions</h3>
+        </div>
+        <p class="text-slate-600 leading-relaxed text-sm md:text-base m-0 font-medium">
+          ZONE FWTを滑走される際は、必ず該当コースのオープン状況を確認した上で、各スキー場が提示する注意事項や「安全ルール（立ち入り禁止区域等）」を遵守しご利用ください。自然の地形を滑走する行為には常に危険が伴います。装備の点検と体調管理を万全にし、自身のスキルに合ったラインを選択してください。
+        </p>
+      </section>
+
+      <!-- コース一覧（カード風の枠を排除し、余白とタイポグラフィによるエディトリアルなグリッド） -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 lg:gap-y-24">
+        {courses.map((c) => (
+          <article id={c.id} class="group flex flex-col">
+            <!-- 画像とバッジ（ストイックな直角デザイン） -->
+            <figure class="relative aspect-[16/10] overflow-hidden mb-6 bg-slate-100 m-0">
+              <img 
+                src={c.image} 
+                alt={`${c.name} ${c.course}`} 
+                class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                width="640"
+                height="400"
+              >
+              <!-- バッジ: 角丸なし・黒背景でエッジを効かせる -->
+              <div class="absolute top-4 left-4 bg-slate-900 text-white font-mono text-[9px] px-3 py-1 uppercase tracking-widest">
+                {c.pref} // {c.number}
+              </div>
+            </figure>
+            
+            <header class="mb-5">
+              <div class="flex items-center gap-2 text-[10px] font-bold text-red-600 uppercase tracking-widest mb-1.5">
+                <span>{c.pref}</span> <span class="text-slate-300" aria-hidden="true">|</span> <span>{c.city}</span>
+              </div>
+              <h3 class="text-2xl md:text-[26px] font-black text-slate-900 uppercase tracking-tight group-hover:text-red-600 transition-colors leading-none m-0">
+                {c.name}
+              </h3>
+            </header>
+            
+            <!-- コース＆スロープ情報（罫線による整理） -->
+            <div class="border-y border-slate-200 py-3.5 mb-5 grid grid-cols-2 gap-4">
+              <div>
+                <span class="block text-[10px] text-slate-400 uppercase font-bold mb-1 tracking-wider">Course</span>
+                <span class="text-xs sm:text-sm font-bold text-slate-700">{c.course}</span>
+              </div>
+              <div>
+                <span class="block text-[10px] text-slate-400 uppercase font-bold mb-1 tracking-wider">Slope</span>
+                <span class="text-xs sm:text-sm font-mono font-bold text-slate-700">{c.slope}</span>
+              </div>
+            </div>
+            
+            <!-- リード文 -->
+            <p class="text-sm text-slate-500 leading-relaxed font-medium m-0 mt-auto">
+              {c.desc}
+            </p>
+          </article>
+        ))}
+      </div>
+
+    </div>
+  </main>
+</Layout>

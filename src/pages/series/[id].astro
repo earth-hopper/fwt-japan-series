@@ -1,0 +1,642 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import rawEvents from '../../data/events.json';
+
+interface EventVenue {
+  name: string;
+  address: string;
+  website?: string;
+  facebook?: string;
+  instagram?: string;
+  google_maps: string;
+}
+
+interface EventEntry {
+  capacity: number | string;
+  selection_method: string;
+  avalanche_airbag: string;
+  fee_eur: number | string;
+}
+
+interface EventSchedule {
+  start_date: string;
+  end_date: string;
+}
+
+interface EventDetail {
+  id: string;
+  name: string;
+  area: string;
+  category: string;
+  stars: number;
+  schedule: EventSchedule;
+  venue: EventVenue;
+  entry: EventEntry;
+}
+
+export async function getStaticPaths() {
+  const events = (rawEvents as EventDetail[]) || [];
+  return events.map((event) => ({
+    params: { id: event.id },
+    props: { event },
+  }));
+}
+
+interface Props {
+  event: EventDetail;
+}
+
+const { event } = Astro.props;
+
+// Dateオブジェクトの自動補正バグを回避する文字列フォーマット
+const formatSafeDate = (dateStr: string): string => {
+  if (!dateStr) return '';
+  const parts = dateStr.split('T')[0].split('-');
+  if (parts.length === 3) return `${parts[0]}.${parts[1]}.${parts[2]}`;
+  return dateStr;
+};
+
+const RULEBOOKS = [
+  { title: "2027-FWT-RIDER-RULEBOOK (日本語版)", url: "https://drive.google.com/file/d/1iQ5fR1R2M0D7Cjw0OT_u4_erWOneARSi/view?usp=drive_link" },
+  { title: "2027-FWT-RIDER-RULEBOOK (English)", url: "https://drive.google.com/file/d/1Wx_EwWo0NSvoyN5Ex1oRqxg1jVzXmpp9/view?usp=drive_link" }
+];
+
+const starString = '★'.repeat(event.stars);
+const categoryLabel = event.category.replace('FREERIDE WORLD TOUR ', '');
+const heroImage = `/img/series_${event.area.toLowerCase().replace(/\s+/g, '_')}.webp`;
+
+const siteUrl = Astro.site?.toString() ?? "https://freerideworldtour.jp";
+const canonicalEventURL = new URL(Astro.url.pathname, siteUrl).toString();
+const ogImageURL = new URL(heroImage, siteUrl).toString();
+
+const pageTitle = event.name;
+const pageDescription = `${event.name}（開催地: ${event.venue.name}）の大会詳細、開催日程、エントリー期間、競技要件、申込料情報。`;
+
+const startDateFormatted = formatSafeDate(event.schedule.start_date);
+const endDateFormatted = formatSafeDate(event.schedule.end_date);
+const endDateShort = endDateFormatted.length > 5 ? endDateFormatted.slice(5) : endDateFormatted;
+
+// 構造化データ（SportsEvent + BreadcrumbList）
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    "name": event.name,
+    "startDate": event.schedule.start_date,
+    "endDate": event.schedule.end_date,
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "location": {
+      "@type": "Place",
+      "name": event.venue.name,
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": event.venue.address,
+        "addressCountry": "JP"
+      }
+    },
+    "image": [ogImageURL],
+    "url": canonicalEventURL,
+    "description": pageDescription,
+    "organizer": {
+      "@type": "SportsOrganization",
+      "name": "FWT JAPAN SERIES",
+      "url": siteUrl
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": String(event.entry.fee_eur),
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/PreOrder",
+      "url": canonicalEventURL
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "HOME",
+        "item": "/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "大会日程",
+        "item": "/series/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": event.name,
+        "item": canonicalEventURL
+      }
+    ]
+  }
+];
+
+const isAirbagRequired = event.entry.avalanche_airbag === '必須' || event.entry.avalanche_airbag.toLowerCase() === 'required';
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  type="article"
+  schema={schema}
+>
+  <!-- ヒーローセクション -->
+  <header class="relative w-full h-[400px] md:h-[500px] overflow-hidden flex items-end pb-12 md:pb-16 px-4">
+    <div class="absolute inset-0 bg-slate-950">
+      <img 
+        src={heroImage}
+        alt={`${event.venue.name}の雪山コンペティション斜面`}
+        class="w-full h-full object-cover opacity-80"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        width="1920"
+        height="800"
+        onerror="this.onerror=null;this.src='/img/series_hero.webp';"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" aria-hidden="true"></div>
+    </div>
+
+    <div class="relative max-w-5xl mx-auto w-full md:px-8 z-10">
+      <div class="flex flex-wrap items-center gap-3 mb-5">
+        <span class="text-sm font-bold text-white tracking-widest uppercase border border-white/30 px-3 py-1">
+          {event.area}
+        </span>
+        <span class="text-sm font-black text-red-500 tracking-widest uppercase flex items-center gap-2">
+          <span>{starString}</span>
+          <span>{categoryLabel}</span>
+        </span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white uppercase tracking-tighter leading-tight m-0">
+        {event.name}
+      </h1>
+    </div>
+  </header>
+
+  <!-- パンくずリストナビゲーション（3階層：イベント詳細用） -->
+  <nav aria-label="パンくずリスト" class="border-b border-slate-200 bg-slate-50/90">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-3">
+      <ol class="flex items-center space-x-2 text-xs sm:text-sm text-slate-600">
+        <li>
+          <a
+            href="/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            HOME
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li>
+          <a
+            href="/series/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            大会日程
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li class="font-semibold text-slate-900 truncate" aria-current="page">
+          {event.name}
+        </li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- メインコンテンツセクション -->
+  <main class="bg-white pb-24">
+    <article class="max-w-5xl mx-auto px-4 sm:px-6 md:px-8">
+
+      <!-- 1. 大会日程 -->
+      <section aria-labelledby="heading-schedule" class="py-12 md:py-16 grid md:grid-cols-12 gap-8 md:gap-12 border-b border-slate-200">
+        <div class="md:col-span-4 lg:col-span-3">
+          <h2 id="heading-schedule" class="font-bold text-slate-900 text-lg md:text-xl tracking-wider m-0">大会日程</h2>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mt-1">Schedule</span>
+        </div>
+        <div class="md:col-span-8 lg:col-span-9">
+          <div class="font-mono text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter flex items-baseline gap-3 mb-6">
+            <time datetime={event.schedule.start_date}>{startDateFormatted}</time>
+            <span class="text-slate-300 font-light">-</span>
+            <time datetime={event.schedule.end_date}>{endDateShort}</time>
+          </div>
+          <div class="border-l-2 border-slate-900 pl-5">
+            <p class="text-sm font-medium text-slate-600 leading-relaxed max-w-2xl m-0">
+              大会期間のうち、天候が最良の日に開催します。天候等によりスケジュールには変更がある可能性があります。参加確定選手宛のメールやライダーズミーティングなど、アップデートされる情報をご参照ください。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 大会会場 -->
+      <section aria-labelledby="heading-venue" class="py-12 md:py-16 grid md:grid-cols-12 gap-8 md:gap-12 border-b border-slate-200">
+        <div class="md:col-span-4 lg:col-span-3">
+          <h2 id="heading-venue" class="font-bold text-slate-900 text-lg md:text-xl tracking-wider m-0">大会会場</h2>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mt-1">Venue</span>
+        </div>
+        <div class="md:col-span-8 lg:col-span-9">
+          <h3 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight">{event.venue.name}</h3>
+          <p class="text-sm font-medium text-slate-600 mb-8 max-w-2xl">
+            {event.venue.address}
+          </p>
+          <div class="flex flex-wrap gap-6">
+            {event.venue.website && (
+              <a href={event.venue.website} target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-red-600 transition-colors">
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-red-600 transition-colors" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span class="border-b border-slate-900 group-hover:border-red-600 pb-0.5 transition-colors">公式サイト</span>
+              </a>
+            )}
+            {event.venue.facebook && (
+              <a href={event.venue.facebook} target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors">
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                <span class="border-b border-slate-900 group-hover:border-blue-600 pb-0.5 transition-colors">Facebook</span>
+              </a>
+            )}
+            {event.venue.instagram && (
+              <a href={event.venue.instagram} target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-pink-600 transition-colors">
+                <svg class="w-4 h-4 text-slate-400 group-hover:text-pink-600 transition-colors" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <span class="border-b border-slate-900 group-hover:border-pink-600 pb-0.5 transition-colors">Instagram</span>
+              </a>
+            )}
+            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.venue.google_maps)}`} target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 text-sm font-bold text-slate-900 hover:text-emerald-600 transition-colors">
+              <svg class="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
+              <span class="border-b border-slate-900 group-hover:border-emerald-600 pb-0.5 transition-colors">Google Maps</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 募集要項 -->
+      <section aria-labelledby="heading-guidelines" class="py-12 md:py-16 grid md:grid-cols-12 gap-8 md:gap-12 border-b border-slate-200">
+        <div class="md:col-span-4 lg:col-span-3">
+          <h2 id="heading-guidelines" class="font-bold text-slate-900 text-lg md:text-xl tracking-wider m-0">募集要項</h2>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mt-1">Guidelines</span>
+        </div>
+        <div class="md:col-span-8 lg:col-span-9">
+          <dl class="grid sm:grid-cols-2 gap-10">
+            <div>
+              <dt class="text-xs text-slate-500 font-bold tracking-widest uppercase mb-2">募集定員</dt>
+              <dd class="text-4xl sm:text-5xl font-mono font-black text-slate-900 tracking-tighter m-0">
+                {event.entry.capacity}<span class="text-lg font-sans font-bold ml-2 text-slate-400">名</span>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500 font-bold tracking-widest uppercase mb-2">選考方法</dt>
+              <dd class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1 m-0">
+                {event.entry.selection_method}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 4. 装備要件 -->
+      <section aria-labelledby="heading-gear" class="py-12 md:py-16 grid md:grid-cols-12 gap-8 md:gap-12 border-b border-slate-200">
+        <div class="md:col-span-4 lg:col-span-3">
+          <h2 id="heading-gear" class="font-bold text-slate-900 text-lg md:text-xl tracking-wider m-0">装備要件</h2>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mt-1">Gear</span>
+        </div>
+        <div class="md:col-span-8 lg:col-span-9">
+          
+          <div class="mb-12">
+            <h3 class="text-xs text-slate-500 font-bold tracking-widest uppercase mb-3 m-0">アバランチ・エアバッグ要件</h3>
+            {isAirbagRequired ? (
+              <div class="flex items-center gap-3 text-red-600 font-black tracking-tight text-xl sm:text-2xl">
+                <svg class="w-6 h-6 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                <span>{event.entry.avalanche_airbag}（装着必須）</span>
+              </div>
+            ) : (
+              <div class="text-slate-900 font-black tracking-tight text-xl sm:text-2xl uppercase">
+                {event.entry.avalanche_airbag}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h3 class="text-xs text-slate-500 font-bold tracking-widest uppercase mb-5 m-0">必須装備リスト</h3>
+            <ul class="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-6 text-sm font-bold text-slate-900 list-none p-0 m-0 mb-6">
+              {['ヘルメット', 'ビーコン', 'プローブ', 'ショベル', 'バックパック', 'バックプロテクター (単体)'].map((gear) => (
+                <li class="flex items-center gap-3 border-b border-slate-100 pb-2">
+                  <svg class="w-3.5 h-3.5 text-slate-300 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  <span>{gear}</span>
+                </li>
+              ))}
+            </ul>
+            <p class="text-xs font-medium text-slate-500 leading-relaxed m-0">
+              <span class="text-red-600 block mb-1">※全て必須とし、不備があった場合は滑走不可となります。</span>
+              ※バックプロテクターはバックパック一体型ではない単体構造のものを着用してください。
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 5. 大会要項 -->
+      <section aria-labelledby="heading-rulebooks" class="py-12 md:py-16 grid md:grid-cols-12 gap-8 md:gap-12 border-b border-slate-200">
+        <div class="md:col-span-4 lg:col-span-3">
+          <h2 id="heading-rulebooks" class="font-bold text-slate-900 text-lg md:text-xl tracking-wider m-0">大会要項</h2>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mt-1">Rulebooks</span>
+        </div>
+        <div class="md:col-span-8 lg:col-span-9">
+          <p class="text-sm font-medium text-slate-600 mb-6 max-w-2xl m-0 leading-relaxed">
+            競技ルール、安全管理基準、採点方法など重要事項が記載されています。エントリー前に必ずご確認ください。
+          </p>
+          <ul class="border-t border-slate-900 list-none p-0 m-0">
+            {RULEBOOKS.map((book) => (
+              <li class="border-b border-slate-200">
+                <a href={book.url} target="_blank" rel="noopener noreferrer" class="group flex items-center justify-between py-5 hover:pl-3 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500">
+                  <span class="text-sm font-bold text-slate-900">{book.title}</span>
+                  <svg class="w-5 h-5 text-slate-300 group-hover:text-slate-900 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- 6. 申込料 -->
+      <section aria-labelledby="heading-entry-fee" class="py-12 md:py-16 grid md:grid-cols-12 gap-8 md:gap-12 border-b border-slate-200">
+        <div class="md:col-span-4 lg:col-span-3">
+          <h2 id="heading-entry-fee" class="font-bold text-slate-900 text-lg md:text-xl tracking-wider m-0">申込料</h2>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mt-1">Entry Fee</span>
+        </div>
+        <div class="md:col-span-8 lg:col-span-9">
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-4 sm:gap-6 mb-10">
+            <div class="font-mono text-5xl md:text-6xl font-black text-slate-900 tracking-tighter">
+              €{event.entry.fee_eur}
+            </div>
+            <button type="button" id="open-refund-modal-btn" aria-haspopup="dialog" class="text-xs font-bold text-slate-500 hover:text-slate-900 underline underline-offset-4 decoration-slate-300 transition-colors">
+              申込料の返金規定について
+            </button>
+          </div>
+
+          <div>
+            <h3 class="text-xs text-slate-500 font-bold tracking-widest uppercase mb-4 m-0">申込料に含まれるもの</h3>
+            <ul class="text-sm font-medium text-slate-900 space-y-3 list-none p-0 m-0 border-l-2 border-slate-900 pl-5">
+              <li class="relative before:content-[''] before:absolute before:-left-[27px] before:top-[6px] before:w-2.5 before:h-2.5 before:bg-white before:border-2 before:border-slate-900 before:rounded-full">
+                フェイスチェック・大会開催日のリフトチケット
+              </li>
+              <li class="relative before:content-[''] before:absolute before:-left-[27px] before:top-[6px] before:w-2.5 before:h-2.5 before:bg-white before:border-2 before:border-slate-900 before:rounded-full">
+                大会開催日の捜索・救助に関わる保険
+              </li>
+            </ul>
+            <p class="text-xs font-medium text-red-600 mt-6 mb-0">
+              ※救助費用以外の傷害保険や山岳保険等につきましては、各自で必ず事前にご加入ください。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. 登録料 -->
+      <section aria-labelledby="heading-membership" class="py-12 md:py-16 grid md:grid-cols-12 gap-8 md:gap-12 border-b border-slate-200">
+        <div class="md:col-span-4 lg:col-span-3">
+          <h2 id="heading-membership" class="font-bold text-slate-900 text-lg md:text-xl tracking-wider m-0">登録料</h2>
+          <span class="font-mono text-[10px] sm:text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mt-1">Membership</span>
+        </div>
+        <div class="md:col-span-8 lg:col-span-9">
+          <p class="text-sm font-medium text-slate-600 mb-8 max-w-2xl m-0 leading-relaxed">
+            大会へのエントリーには、事前のFWT公式メンバーシップ登録（以下のいずれか）が必須です。
+          </p>
+          
+          <div class="grid sm:grid-cols-2 border-t border-b border-slate-900 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 mb-8">
+            <!-- One Event -->
+            <div class="py-6 sm:pr-8">
+              <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">1イベントのみ出場の場合</div>
+              <div class="flex items-baseline gap-3 mb-5">
+                <h3 class="font-black text-slate-900 text-xl m-0">One Event</h3>
+                <span class="font-mono text-3xl font-black text-slate-900">€25</span>
+              </div>
+              <ul class="text-xs font-medium text-slate-600 space-y-2 list-none p-0 m-0">
+                <li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-1.5 before:w-1 before:h-1 before:bg-slate-400 before:rounded-full">いかなる場合も返金不可</li>
+                <li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-1.5 before:w-1 before:h-1 before:bg-slate-400 before:rounded-full">後日差額支払いでTourへアップグレード可</li>
+              </ul>
+            </div>
+            
+            <!-- Tour -->
+            <div class="py-6 sm:pl-8">
+              <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">2イベント以上出場の場合</div>
+              <div class="flex items-baseline gap-3 mb-5">
+                <h3 class="font-black text-slate-900 text-xl m-0">Tour</h3>
+                <span class="font-mono text-3xl font-black text-slate-900">€70</span>
+              </div>
+              <ul class="text-xs font-medium text-slate-600 space-y-2 list-none p-0 m-0">
+                <li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-1.5 before:w-1 before:h-1 before:bg-slate-400 before:rounded-full">一度も出場できず、2027年5月15日までに問合せがあった場合のみ返金可</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="border border-red-200 p-5 bg-red-50/40">
+            <p class="text-sm font-medium text-slate-800 leading-relaxed m-0">
+              <strong class="block mb-1 text-red-600 font-bold">【重要】アカウントの重複作成禁止</strong>
+              前シーズン以前に登録済みの方は必ず同一アカウントにログインして更新してください。新しく別アカウントを作成すると過去の獲得ポイント・戦績の統合ができません。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- エントリー開始告知バー -->
+      <section aria-label="エントリー受付" class="py-16 md:py-24 text-center border-b border-slate-200">
+        <div class="inline-flex flex-col items-center justify-center">
+          <div class="text-lg md:text-2xl font-black tracking-widest uppercase text-slate-300 mb-3">
+            2026年11月1日にエントリー開始
+          </div>
+          <p class="text-xs font-bold text-slate-400 tracking-wider m-0">
+            ※エントリー前に必ず公式メンバーシップ登録を完了させてください。
+          </p>
+        </div>
+      </section>
+
+      <!-- お問い合わせセクション -->
+      <section aria-labelledby="heading-contact" class="pt-24 max-w-3xl mx-auto text-center">
+        
+        <h2 id="heading-contact" class="font-bold text-slate-900 tracking-wider text-xl sm:text-2xl m-0 mb-1">お問い合わせ</h2>
+        <span class="font-mono text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mb-10">Contact</span>
+
+        <a
+          href="https://forms.gle/bab3vLUA6NJ2txuH6"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-3 px-10 py-4 bg-slate-900 text-white font-bold text-sm tracking-widest uppercase hover:bg-red-600 transition-colors duration-300 mb-16 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+        >
+          <span>お問い合わせフォーム</span>
+        </a>
+
+        <div class="text-left border-t border-slate-900 pt-10">
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-widest mb-10 text-center m-0">各種システム・お支払いに関する専用窓口</h3>
+          
+          <div class="grid sm:grid-cols-2 gap-10">
+            <!-- LiveHeats情報変更 -->
+            <div>
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-200 pb-2 mb-4 m-0">LiveHeatsの選手情報変更</h4>
+              <p class="text-xs font-medium text-slate-600 leading-relaxed mb-4 m-0">
+                登録済み選手情報の変更は日本事務局で代行できません。ご自身でアカウントへログインして変更をお願いいたします。
+              </p>
+              <a href="https://liveheats.com/" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-slate-900 hover:text-red-600 border-b border-slate-900 hover:border-red-600 transition-colors pb-0.5 inline-flex focus-visible:outline-none">
+                LiveHeats にログイン
+              </a>
+            </div>
+            
+            <!-- 登録・支払い -->
+            <div>
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-200 pb-2 mb-4 m-0">
+                登録・お支払いについて <span class="text-red-600 ml-1 font-medium">※英語対応のみ</span>
+              </h4>
+              <p class="text-xs font-medium text-slate-600 leading-relaxed mb-4 m-0">
+                メンバーシップ登録やエントリー料の決済はスイスのFWT本国窓口での対応となります。直接メールにてお問い合わせください。
+              </p>
+              <ul class="text-xs font-bold text-slate-900 space-y-2 list-none p-0 m-0">
+                <li class="flex flex-col sm:flex-row gap-1">
+                  <span class="text-slate-400 font-medium w-28">クオリファイアー:</span>
+                  <a href="mailto:qualifiers@freerideworldtour.com" class="hover:text-red-600 transition-colors">qualifiers@freerideworldtour.com</a>
+                </li>
+                <li class="flex flex-col sm:flex-row gap-1">
+                  <span class="text-slate-400 font-medium w-28">ジュニア:</span>
+                  <a href="mailto:juniors@freerideworldtour.com" class="hover:text-red-600 transition-colors">juniors@freerideworldtour.com</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <!-- 大会一覧に戻るボタン -->
+  <nav aria-label="ページ移動" class="bg-white py-16 flex justify-center border-t border-slate-200">
+    <a
+      href="/series/"
+      class="group inline-flex items-center gap-3 px-8 py-4 text-xs font-bold uppercase tracking-widest text-slate-900 hover:text-red-600 transition-colors focus-visible:outline-none"
+    >
+      <svg class="w-4 h-4 shrink-0 transition-transform group-hover:-translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      <span class="border-b border-slate-900 group-hover:border-red-600 pb-0.5 transition-colors">大会一覧に戻る</span>
+    </a>
+  </nav>
+
+  <!-- 返金規定モーダルダイアログ -->
+  <dialog
+    id="refund-modal"
+    aria-labelledby="modal-refund-title"
+    class="backdrop:bg-slate-900/90 p-0 shadow-2xl w-full max-w-2xl border-0 m-auto"
+  >
+    <div class="bg-white overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between p-6 md:p-8 border-b border-slate-900 shrink-0">
+        <h3 id="modal-refund-title" class="text-xl font-black text-slate-900 uppercase tracking-widest m-0">
+          Refund Policy
+        </h3>
+        <button
+          type="button"
+          id="close-refund-modal-btn"
+          aria-label="モーダルを閉じる"
+          class="text-slate-400 hover:text-slate-900 transition-colors focus-visible:outline-none"
+        >
+          <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 md:p-8 space-y-8 overflow-y-auto">
+        <div>
+          <h4 class="font-bold text-slate-900 text-sm mb-4 border-l-2 border-slate-900 pl-3 uppercase tracking-widest m-0">
+            100% ご返金の対象
+          </h4>
+          <ul class="text-sm font-medium text-slate-600 space-y-3 list-none leading-relaxed p-0 m-0">
+            <li class="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-slate-300 before:rounded-full">
+              大会期間前（選手現地到着前）に主催者側が大会中止を決定した場合。
+            </li>
+            <li class="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-slate-300 before:rounded-full">
+              選手が病気やケガで出場不可となり、前日までに事務局へ連絡があった場合（※3日以内に医師の診断書の提出が必須）。
+            </li>
+            <li class="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-slate-300 before:rounded-full">
+              感染症拡大等に伴う政府移動規制により前日までに連絡があった場合。
+            </li>
+          </ul>
+          <p class="text-xs font-bold text-slate-400 mt-4 tracking-wider m-0">
+            ※ご返金の際、決済プラットフォームの手数料（3ユーロ）は差し引かれます。
+          </p>
+        </div>
+
+        <div class="pt-8 border-t border-slate-200">
+          <h4 class="font-bold text-slate-900 text-sm mb-4 border-l-2 border-red-600 pl-3 uppercase tracking-widest m-0">
+            ご返金なしのケース
+          </h4>
+          <ul class="text-sm font-medium text-slate-600 space-y-3 list-none leading-relaxed p-0 m-0">
+            <li class="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-slate-300 before:rounded-full">
+              大会予定期間中に悪天候等の不可抗力により大会が実施されなかった場合。
+            </li>
+            <li class="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-slate-300 before:rounded-full">
+              選手の個人的都合によるキャンセルで、開催予定日前日までに事務局への連絡がなかった場合。
+            </li>
+            <li class="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-slate-300 before:rounded-full">
+              公式メンバーシップ登録料（One Event は常時返金不可 / Tour は全戦未出場かつ規定期日までの申請以外不可）。
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</Layout>
+
+<style>
+  dialog::backdrop {
+    animation: dialog-backdrop-fade 0.3s ease-out;
+  }
+  dialog[open] {
+    animation: dialog-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes dialog-backdrop-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes dialog-fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<script>
+  function setupEventModal() {
+    const modal = document.getElementById('refund-modal') as HTMLDialogElement | null;
+    const openBtn = document.getElementById('open-refund-modal-btn');
+    const closeBtn = document.getElementById('close-refund-modal-btn');
+
+    if (!modal) return;
+
+    if (openBtn) {
+      openBtn.onclick = () => modal.showModal();
+    }
+
+    if (closeBtn) {
+      closeBtn.onclick = () => modal.close();
+    }
+
+    // バックドロップクリックで閉じる
+    modal.onclick = (e) => {
+      const rect = modal.getBoundingClientRect();
+      const isInDialog = (
+        rect.top <= e.clientY &&
+        e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX &&
+        e.clientX <= rect.left + rect.width
+      );
+      if (!isInDialog) {
+        modal.close();
+      }
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupEventModal);
+  } else {
+    setupEventModal();
+  }
+  document.addEventListener('astro:page-load', setupEventModal);
+</script>

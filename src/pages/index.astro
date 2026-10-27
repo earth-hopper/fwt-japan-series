@@ -1,16 +1,484 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import ridersData from '../data/riders.json';
+
+interface Rider {
+  id: string;
+  rider: string;
+  discipline: string;
+  nation: string;
+  profile: string;
+  comment: string;
+}
+
+// ニュース一覧の取得と最新3件の抽出
+const allNews: CollectionEntry<'news'>[] = await getCollection('news');
+const latestNews = allNews
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+// 日付フォーマット関数（YYYY.MM.DD）
+const formatDate = (date: Date): string => {
+  return new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+    .format(date)
+    .replace(/\//g, '.');
+};
+
+// ライダーデータのバリデーションとシャッフル処理
+const validRiders: Rider[] = (ridersData as Rider[]).filter(
+  (rider) => rider.comment?.trim() && rider.profile?.trim()
+);
+
+const shuffledRiders = [...validRiders];
+for (let i = shuffledRiders.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [shuffledRiders[i], shuffledRiders[j]] = [shuffledRiders[j], shuffledRiders[i]];
+}
+
+const marqueeDuration = Math.max(shuffledRiders.length * 6, 20);
+
+// トップページ固有の構造化データ（AEO / SEOエンティティ定義）
+const pageSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsSeries',
+  name: 'FWT JAPAN SERIES',
+  alternateName: 'Freeride World Tour Japan Series',
+  sport: ['Freeride Skiing', 'Freeride Snowboarding'],
+  description: '世界最高峰のフリーライドスキー・スノーボード大会「FWT」の日本公式シリーズ。',
+  inLanguage: 'ja',
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title="フリーライドスキー・スノーボード公式大会"
+  description="世界最高峰のフリーライドスキー・スノーボード大会「FWT」の日本公式シリーズ。スポーツやカルチャーとしてのフリーライド、日本シリーズの大会日程、最新ランキング、選手プロフィールなどを発信しています。"
+  image="/img/og-main.jpg"
+  type="website"
+  schema={pageSchema}
+>
+  <main>
+    <!-- HERO SECTION -->
+    <section class="relative w-full h-screen bg-black overflow-hidden" aria-labelledby="hero-title">
+      <div class="absolute inset-0 z-0" aria-hidden="true">
+        <video
+          autoplay
+          loop
+          muted
+          playsinline
+          poster="/img/sample.webp"
+          preload="metadata"
+          class="w-full h-full object-cover opacity-0 animate-video-fade"
+        >
+          <source src="/video/hero-pc.mp4" media="(min-width: 768px)" />
+          <source src="/video/hero-sp.mp4" />
+        </video>
+        <div class="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent w-1/2 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+      </div>
+
+      <div class="absolute top-0 right-0 h-full p-4 md:p-8 flex items-center justify-center z-10 pointer-events-none" aria-hidden="true">
+        <div class="vertical-text font-extreme text-[15vh] md:text-[22vh] font-black leading-[0.8] tracking-tighter text-white mix-blend-overlay opacity-60 m-0 select-none">
+          DROP IN<span class="text-red-600 mix-blend-normal">.</span>
+        </div>
+      </div>
+
+      <div class="absolute bottom-0 left-0 w-full p-6 pb-12 md:p-12 lg:p-16 z-20 pointer-events-none flex flex-col justify-end">
+        <div class="max-w-3xl drop-shadow-lg">
+          <h1 id="hero-title" class="flex flex-col mb-8 md:mb-10">
+            <span class="font-extreme text-lg md:text-2xl lg:text-3xl font-bold text-white/90 tracking-widest uppercase mb-2 md:mb-3 flex items-center gap-4">
+              <span class="w-8 md:w-12 h-[2px] bg-red-600" aria-hidden="true"></span>
+              Freeride World Tour
+            </span>
+            <span class="font-extreme text-4xl md:text-6xl lg:text-8xl font-black text-white tracking-wider uppercase leading-none">
+              Japan Series
+            </span>
+          </h1>
+
+          <div class="pointer-events-auto">
+            <a
+              href="/replay"
+              class="group relative inline-flex items-center justify-center gap-6 border border-white/20 bg-black/20 backdrop-blur-md px-8 py-4 text-xs font-bold tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black transition-colors duration-500 overflow-hidden"
+              aria-label="大会リプレイ映像を視聴する"
+            >
+              <span class="relative z-10 flex items-center gap-3">
+                REPLAY
+                <i class="ri-arrow-right-line text-lg transform group-hover:translate-x-2 transition-transform duration-300" aria-hidden="true"></i>
+              </span>
+              <div class="absolute bottom-0 left-0 w-0 h-[2px] bg-red-600 group-hover:w-full transition-all duration-500 ease-out z-20" aria-hidden="true"></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BREAKING NEWS BANNER -->
+    <section class="relative w-full bg-red-600 text-white overflow-hidden z-30 border-y border-red-700 shadow-[0_10px_30px_rgba(220,38,38,0.3)]" aria-labelledby="olympic-news-title">
+      <div class="absolute inset-0 opacity-10 pointer-events-none stripe-pattern" aria-hidden="true"></div>
+
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-6 md:py-8 relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+        <div class="flex items-start md:items-center gap-5 md:gap-8">
+          <div class="relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 shrink-0 mt-1 md:mt-0" aria-hidden="true">
+            <div class="absolute inset-0 bg-white rounded-full animate-ping opacity-60"></div>
+            <div class="relative z-10 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-white text-red-600 rounded-full shadow-lg">
+              <i class="ri-medal-fill text-xl md:text-2xl"></i>
+            </div>
+          </div>
+
+          <div>
+            <div class="font-mono text-[10px] md:text-xs tracking-[0.3em] font-bold mb-2 opacity-90 flex items-center gap-2">
+              <span class="w-1.5 h-1.5 bg-white inline-block animate-pulse rounded-full" aria-hidden="true"></span>
+              BREAKING NEWS // 2030 WINTER GAMES
+            </div>
+            <h2 id="olympic-news-title" class="font-extreme text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-widest leading-none drop-shadow-md mb-2">
+              Freeride Goes Olympic
+            </h2>
+            <p class="text-sm md:text-base font-medium tracking-wide text-white/90">
+              フリーライドスキー・スノーボードが、2030年冬季五輪の正式種目に決定！
+            </p>
+          </div>
+        </div>
+
+        <a
+          href="https://prtimes.jp/main/html/rd/p/000000084.000058216.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative flex items-center justify-center gap-4 px-8 py-4 bg-white overflow-hidden w-full lg:w-auto shrink-0 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-red-600 transition-all duration-500"
+          aria-label="プレスリリースを読む（新しいタブで開きます）"
+        >
+          <div class="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-0" aria-hidden="true"></div>
+          <span class="font-mono text-xs text-black group-hover:text-white font-bold uppercase tracking-[0.2em] relative z-10 transition-colors duration-300">
+            プレスリリースを読む
+          </span>
+          <i class="ri-arrow-right-line text-lg text-black group-hover:text-white transform group-hover:translate-x-2 transition-all duration-300 relative z-10" aria-hidden="true"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- CONCEPT & SITE DIRECTORY SECTION -->
+    <section class="w-full bg-white py-20 md:py-32 relative overflow-hidden" aria-labelledby="concept-title">
+      <div class="absolute top-10 right-[-5%] text-[18vw] font-extreme font-black text-gray-50 leading-none tracking-tighter pointer-events-none select-none z-0" aria-hidden="true">
+        CANVAS
+      </div>
+
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-12 md:h-24 bg-gradient-to-b from-black to-transparent opacity-20 z-10" aria-hidden="true"></div>
+
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 relative z-10">
+        <div class="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-20 md:mb-32">
+          <div class="lg:w-5/12 shrink-0">
+            <div class="font-mono text-[10px] md:text-xs text-red-600 tracking-[0.3em] uppercase mb-6 flex items-center gap-4">
+              <span class="w-8 h-[2px] bg-red-600" aria-hidden="true"></span>
+              Concept
+            </div>
+
+            <h2 id="concept-title" class="text-4xl md:text-5xl lg:text-7xl font-black text-black leading-[1.15] tracking-tighter drop-shadow-sm">
+              さあ、<br />真っ白な<br />キャンバスへ
+            </h2>
+          </div>
+
+          <div class="lg:w-7/12 flex flex-col justify-center mt-4 lg:mt-0">
+            <div class="relative border-l border-gray-200 pl-6 md:pl-10 py-2">
+              <div class="absolute top-0 -left-[1.5px] w-[3px] h-12 bg-red-600" aria-hidden="true"></div>
+
+              <p class="text-xl md:text-2xl lg:text-3xl font-bold text-black mb-6 md:mb-8 leading-snug tracking-tight">
+                決まっているのは、<br class="md:hidden" />スタートとゴールだけ。
+              </p>
+              <p class="text-base md:text-lg text-gray-600 leading-relaxed md:leading-[2.2] text-justify font-medium">
+                ライダーは地形と雪質を読み、頭に描いたラインにDROP IN。<br class="hidden md:block" />
+                「フリーライド」は自然のままの雪山の地形を滑り、<br class="hidden xl:block" />
+                テクニックやスタイルを競うバックカントリー競技。<br class="hidden md:block" />
+                その世界最高峰ツアーがFreeride World Tour（FWT）です。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 relative">
+          <div class="absolute -top-10 left-0 w-full h-[1px] bg-gray-200 hidden md:block" aria-hidden="true"></div>
+
+          <a
+            href="/about"
+            class="group relative flex flex-col justify-between bg-gray-50 hover:bg-black p-8 md:p-10 transition-colors duration-500 overflow-hidden min-h-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
+          >
+            <div>
+              <div class="text-red-600 font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] mb-6 group-hover:text-red-500 transition-colors flex items-center gap-3">
+                01 <span class="w-4 h-[1px] bg-red-600 group-hover:bg-red-500" aria-hidden="true"></span> DISCOVER
+              </div>
+              <h3 class="text-2xl md:text-3xl font-black text-black group-hover:text-white mb-3 transition-colors tracking-tight">
+                FWTとは？
+              </h3>
+              <p class="text-sm text-gray-500 group-hover:text-gray-400 transition-colors font-medium">
+                フリーライドの魅力と、世界最高峰ツアーのルールや歴史を知る。
+              </p>
+            </div>
+            <div class="text-right text-gray-300 group-hover:text-white transform group-hover:translate-x-2 transition-all duration-500" aria-hidden="true">
+              <i class="ri-arrow-right-line text-3xl"></i>
+            </div>
+          </a>
+
+          <a
+            href="/zone"
+            class="group relative flex flex-col justify-between bg-gray-50 hover:bg-black p-8 md:p-10 transition-colors duration-500 overflow-hidden min-h-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
+          >
+            <div>
+              <div class="text-red-600 font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] mb-6 group-hover:text-red-500 transition-colors flex items-center gap-3">
+                02 <span class="w-4 h-[1px] bg-red-600 group-hover:bg-red-500" aria-hidden="true"></span> EXPERIENCE
+              </div>
+              <h3 class="text-2xl md:text-3xl font-black text-black group-hover:text-white mb-3 transition-colors tracking-tight">
+                体験しよう
+              </h3>
+              <p class="text-sm text-gray-500 group-hover:text-gray-400 transition-colors font-medium">
+                公認リゾートの非圧雪エリアやアカデミーで、パウダーライドを体感する。
+              </p>
+            </div>
+            <div class="text-right text-gray-300 group-hover:text-white transform group-hover:translate-x-2 transition-all duration-500" aria-hidden="true">
+              <i class="ri-arrow-right-line text-3xl"></i>
+            </div>
+          </a>
+
+          <a
+            href="/series"
+            class="group relative flex flex-col justify-between bg-gray-50 hover:bg-black p-8 md:p-10 transition-colors duration-500 overflow-hidden min-h-[280px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
+          >
+            <div>
+              <div class="text-red-600 font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] mb-6 group-hover:text-red-500 transition-colors flex items-center gap-3">
+                03 <span class="w-4 h-[1px] bg-red-600 group-hover:bg-red-500" aria-hidden="true"></span> CHALLENGE
+              </div>
+              <h3 class="text-2xl md:text-3xl font-black text-black group-hover:text-white mb-3 transition-colors tracking-tight">
+                参戦しよう
+              </h3>
+              <p class="text-sm text-gray-500 group-hover:text-gray-400 transition-colors font-medium">
+                予選大会（Qualifier）へのエントリー方法や、ライダー登録について。
+              </p>
+            </div>
+            <div class="text-right text-gray-300 group-hover:text-white transform group-hover:translate-x-2 transition-all duration-500" aria-hidden="true">
+              <i class="ri-arrow-right-line text-3xl"></i>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- LATEST NEWS SECTION -->
+    <section class="py-16 md:py-24 bg-white" aria-labelledby="latest-news-title">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+        <div class="text-center mb-16">
+          <h2 id="latest-news-title" class="font-extreme text-4xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase m-0">
+            LATEST NEWS
+          </h2>
+        </div>
+
+        <!-- ニュースリスト（直角・エディトリアルグリッド） -->
+        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 md:gap-y-16 list-none p-0 m-0 mb-16">
+          {latestNews.map((item) => {
+            const slug = item.id ?? item.slug;
+            return (
+              <li class="flex flex-col">
+                <article class="w-full flex-grow flex flex-col">
+                  <a 
+                    href={`/news/${slug}/`} 
+                    class="group flex flex-col h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-4"
+                  >
+                    <!-- サムネイル写真（直角・アスペクト比固定） -->
+                    <figure class="relative aspect-[16/10] overflow-hidden bg-slate-100 mb-5 m-0">
+                      <img 
+                        src={item.data.thumbnail} 
+                        alt="" 
+                        loading="lazy" 
+                        decoding="async" 
+                        width="640" 
+                        height="400" 
+                        class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" 
+                      />
+                      <!-- 直角のソリッドバッジ -->
+                      <div class="absolute top-3 left-3 bg-slate-900 text-white font-mono text-[9px] font-bold px-2.5 py-1 tracking-widest uppercase">
+                        {item.data.category}
+                      </div>
+                    </figure>
+                    
+                    <!-- 日付・矢印アイコン -->
+                    <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-200">
+                      <time datetime={item.data.date.toISOString()} class="font-mono text-xs text-slate-400 font-bold tracking-widest">
+                        {formatDate(item.data.date)}
+                      </time>
+                      <svg
+                        class="w-4 h-4 text-slate-300 group-hover:text-red-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                      </svg>
+                    </div>
+
+                    <!-- 記事タイトル（h2からh3に変更） -->
+                    <h3 class="font-extreme text-lg sm:text-xl font-black text-slate-900 uppercase group-hover:text-red-600 transition-colors leading-snug line-clamp-2 mb-2.5 m-0">
+                      {item.data.title}
+                    </h3>
+
+                    <!-- 記事抜粋 -->
+                    {item.data.excerpt && (
+                      <p class="text-slate-500 text-xs sm:text-sm leading-relaxed line-clamp-3 font-medium m-0 mt-auto">
+                        {item.data.excerpt}
+                      </p>
+                    )}
+                  </a>
+                </article>
+              </li>
+            );
+          })}
+        </ul>
+
+        <!-- 一覧ボタン（世界観に合わせて直角ソリッドに調整） -->
+        <div class="text-center">
+          <a
+            href="/news/"
+            class="inline-flex items-center justify-center px-10 py-4 bg-slate-900 text-white font-mono text-xs font-bold tracking-[0.2em] uppercase hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2 transition-colors duration-300"
+          >
+            ALL NEWS &gt;
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIDER'S VOICES SECTION -->
+    <section class="bg-[#05070a] py-24 md:py-32 relative overflow-hidden border-t border-white/10" aria-labelledby="marquee-heading">
+      <div class="absolute inset-0 opacity-[0.02] pointer-events-none radial-dots" aria-hidden="true"></div>
+
+      <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-20 mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+        <div>
+          <div class="font-mono text-red-500 text-sm tracking-[0.3em] mb-2 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)] flex items-center gap-2">
+            <span class="w-1.5 h-1.5 bg-red-500 inline-block animate-pulse rounded-full" aria-hidden="true"></span>
+            [ RIDER'S VOICES ]
+          </div>
+          <h2 id="marquee-heading" class="font-display font-black text-4xl md:text-5xl lg:text-6xl text-white uppercase tracking-tighter leading-none">
+            What is Freeride<br />To You?
+          </h2>
+        </div>
+        <div class="font-mono text-xs text-slate-400 tracking-widest leading-relaxed text-left md:text-right border-l md:border-l-0 md:border-r border-white/20 pl-4 md:pl-0 md:pr-4 py-1" aria-hidden="true">
+          // PHILOSOPHY OF THE RIDERS<br />
+          // EXPRESSING FREEDOM
+        </div>
+      </div>
+
+      <div class="w-full relative marquee-mask overflow-hidden py-4">
+        {shuffledRiders.length > 0 ? (
+          <div
+            class="flex w-max gap-6 px-6 animate-marquee hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:overflow-x-auto motion-reduce:snap-x motion-reduce:snap-mandatory pb-4"
+            style={`--marquee-duration: ${marqueeDuration}s;`}
+          >
+            {[0, 1].map((setIndex) => (
+              <div
+                class="flex gap-6 shrink-0"
+                aria-hidden={setIndex === 1 ? 'true' : undefined}
+              >
+                {shuffledRiders.map((rider) => (
+                  <a
+                    href={`/riders/${rider.id}/`}
+                    tabindex={setIndex === 1 ? -1 : undefined}
+                    class="group block w-[280px] md:w-[320px] shrink-0 bg-[#0a0e17] border border-white/10 overflow-hidden relative transition-all duration-500 hover:border-red-500/50 hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(225,29,72,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-4 focus-visible:ring-offset-[#05070a] flex flex-col h-[520px] rounded-sm motion-reduce:snap-center"
+                  >
+                    <div class="aspect-square w-full overflow-hidden relative border-b border-white/10 bg-black">
+                      <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none" aria-hidden="true"></div>
+                      <img
+                        src={rider.profile}
+                        alt={`${rider.rider}のプロフィール画像`}
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <div class="absolute bottom-3 left-3 bg-[#05070a]/90 backdrop-blur-md px-3 py-1.5 border border-white/10 flex items-center gap-2 z-20 rounded-sm">
+                        <span class="text-xs font-bold text-white">{rider.nation}</span>
+                        <span class="w-px h-3 bg-white/30" aria-hidden="true"></span>
+                        <span class="text-[10px] text-red-500 font-mono tracking-widest uppercase">{rider.discipline}</span>
+                      </div>
+                    </div>
+                    <div class="p-6 md:p-8 flex-grow flex flex-col relative bg-gradient-to-b from-transparent to-[#05070a]">
+                      <div class="absolute top-4 right-4 text-7xl text-white/5 font-display font-black leading-none group-hover:text-red-500/10 transition-colors duration-500 pointer-events-none select-none" aria-hidden="true">"</div>
+                      <p class="text-slate-300 text-sm font-medium leading-relaxed mb-6 line-clamp-3 relative z-10 group-hover:text-white transition-colors duration-300">
+                        {rider.comment}
+                      </p>
+                      <div class="mt-auto relative z-10">
+                        <h3 class="font-display font-black text-xl text-white uppercase tracking-tight group-hover:text-red-500 transition-colors duration-300">
+                          {rider.rider}
+                        </h3>
+                        <div class="flex items-center justify-between mt-3 border-t border-white/10 pt-3">
+                          <span class="font-mono text-[10px] text-slate-500 tracking-widest uppercase group-hover:text-slate-300 transition-colors duration-300">View Profile</span>
+                          <span class="text-slate-500 font-mono text-sm group-hover:text-red-500 group-hover:translate-x-1 transition-all duration-300" aria-hidden="true">[+]</span>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="flex justify-center items-center h-[520px]">
+            <p class="text-slate-400 font-mono text-sm tracking-widest">No rider voices available.</p>
+          </div>
+        )}
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  @keyframes videoFade {
+    0% {
+      opacity: 0;
+      transform: scale(1.05);
+      filter: blur(5px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+      filter: blur(0);
+    }
+  }
+
+  .animate-video-fade {
+    animation: videoFade 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .stripe-pattern {
+    background-image: repeating-linear-gradient(45deg, #000 0, #000 2px, transparent 2px, transparent 8px);
+  }
+
+  .radial-dots {
+    background-image: radial-gradient(#ffffff 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  @keyframes marqueeScroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marqueeScroll var(--marquee-duration, 60s) linear infinite;
+  }
+
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  }
+</style>

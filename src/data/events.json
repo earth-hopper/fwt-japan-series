@@ -1,0 +1,281 @@
+[
+    {
+      "id": "hakuba-junior",
+      "area": "HAKUBA",
+      "name": "2027 FWT HAKUBA JUNIOR 2*",
+      "category": "FREERIDE WORLD TOUR JUNIOR",
+      "stars": 2,
+      "schedule": {
+        "start_date": "2027-01-23",
+        "end_date": "2027-01-24"
+      },
+      "venue": {
+        "name": "HAKUBA VALLEY",
+        "address": "長野県北安曇郡白馬村北城",
+        "website": "https://www.hakubavalley.com/ja/",
+        "facebook": "https://www.facebook.com/hakubavillage",
+        "instagram": "https://www.instagram.com/hakubalife/?hl",
+        "google_maps": "Hokujo"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 70,
+        "fee_eur": 90,
+        "selection_method": "シード順",
+        "avalanche_airbag": "推奨（必須ではない）",
+        "age_limit": "10-18"
+      },
+      "notes": {
+        "riders_meeting": "オンライン必須",
+        "concurrent_event": null
+      }
+    },
+    {
+      "id": "hakuba-qualifier",
+      "area": "HAKUBA",
+      "name": "2027 FWT HAKUBA QUALIFIER 4*",
+      "category": "FREERIDE WORLD TOUR QUALIFIER",
+      "stars": 4,
+      "schedule": {
+        "start_date": "2027-01-25",
+        "end_date": "2027-01-28"
+      },
+      "venue": {
+        "name": "HAKUBA VALLEY",
+        "address": "長野県北安曇郡白馬村北城",
+        "website": "https://www.hakubavalley.com/ja/",
+        "facebook": "https://www.facebook.com/hakubavillage",
+        "instagram": "https://www.instagram.com/hakubalife/?hl",
+        "google_maps": "Hokujo"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 60,
+        "fee_eur": 160,
+        "selection_method": "シード順",
+        "avalanche_airbag": "必須",
+        "age_limit": null
+      },
+      "notes": {
+        "riders_meeting": "リアルまたはオンライン必須",
+        "concurrent_event": null
+      }
+    },
+    {
+        "id": "muica-qualifier",
+        "area": "MUICA",
+        "name": "2027 FWT MUICA QUALIFIER 1*",
+        "category": "FREERIDE WORLD TOUR QUALIFIER",
+        "stars": 1,
+        "schedule": {
+          "start_date": "2027-01-30",
+          "end_date": "2027-01-31"
+        },
+        "venue": {
+          "name": "ムイカスノーリゾート",
+          "address": "〒949-6636 新潟県南魚沼市小栗山2910-114",
+          "website": "https://www.muikamachi.com/access.php",
+          "facebook": "https://www.facebook.com/muicasnowresort/",
+          "instagram": "https://www.instagram.com/muicasnowresort/",
+          "google_maps": "MUICA SNOW RESORT"
+        },
+        "entry": {
+          "application_start": "2026-11-01T20:00:00+09:00",
+          "capacity": 100,
+          "fee_eur": 130,
+          "selection_method": "先着順",
+          "avalanche_airbag": "推奨（必須ではない）",
+          "age_limit": null
+        },
+        "notes": {
+          "riders_meeting": "オンライン必須",
+          "concurrent_event": null
+        }
+    },
+    {
+      "id": "nakazato-junior",
+      "area": "NAKAZATO",
+      "name": "2027 FWT NAKAZATO JUNIOR 1*",
+      "category": "FREERIDE WORLD TOUR JUNIOR",
+      "stars": 1,
+      "schedule": {
+        "start_date": "2027-01-30",
+        "end_date": "2027-01-31"
+      },
+      "venue": {
+        "name": "湯沢中里スキー場",
+        "address": "新潟県南魚沼市舞子2056-108",
+        "website": "https://www.yuzawa-nakazato.com/winter/",
+        "facebook": "https://www.facebook.com/yuzawanakazato/?locale=ja_JP",
+        "instagram": "https://www.instagram.com/yuzawanakazato/",
+        "google_maps": "Yuzawa Nakazato Snow Resort"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 80,
+        "fee_eur": 80,
+        "selection_method": "先着順",
+        "avalanche_airbag": "推奨（必須ではない）",
+        "age_limit": "10-18"
+      },
+      "notes": {
+        "riders_meeting": "オンライン必須",
+        "concurrent_event": "2027 FWT NAKAZATO QUALIFIER 2*と同日に開催する場合があります。"
+      }
+    },
+    {
+      "id": "nakazato-qualifier",
+      "area": "NAKAZATO",
+      "name": "2027 FWT NAKAZATO QUALIFIER 2*",
+      "category": "FREERIDE WORLD TOUR QUALIFIER",
+      "stars": 2,
+      "schedule": {
+        "start_date": "2027-01-31",
+        "end_date": "2027-02-01"
+      },
+      "venue": {
+        "name": "湯沢中里スキー場",
+        "address": "新潟県南魚沼市舞子2056-108",
+        "website": "https://www.yuzawa-nakazato.com/winter/",
+        "facebook": "https://www.facebook.com/yuzawanakazato/?locale=ja_JP",
+        "instagram": "https://www.instagram.com/yuzawanakazato/",
+        "google_maps": "Yuzawa Nakazato Snow Resort"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 100,
+        "fee_eur": 140,
+        "selection_method": "シード順",
+        "avalanche_airbag": "推奨（必須ではない）",
+        "age_limit": null
+      },
+      "notes": {
+        "riders_meeting": "オンライン必須",
+        "concurrent_event": "2027 FWT NAKAZATO JUNIOR 1*と同日に開催する場合があります。"
+      }
+    },
+    {
+      "id": "arai-qualifier",
+      "area": "ARAI",
+      "name": "2027 FWT ARAI QUALIFIER 3*",
+      "category": "FREERIDE WORLD TOUR QUALIFIER",
+      "stars": 3,
+      "schedule": {
+        "start_date": "2027-02-26",
+        "end_date": "2027-02-28"
+      },
+      "venue": {
+        "name": "ARAI MOUNTAIN RESORT",
+        "address": "新潟県妙高市両善寺1966",
+        "website": "https://www.lottehotel.com/arai-resort/ja/ski-webzine.html",
+        "facebook": "https://www.facebook.com/LOTTEARAIRESORT/",
+        "instagram": "https://www.instagram.com/lottearairesort/",
+        "google_maps": "https://goo.gl/maps/nXi1C3AF6qXVAirBA"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 95,
+        "fee_eur": 150,
+        "selection_method": "シード順",
+        "avalanche_airbag": "必須",
+        "age_limit": null
+      },
+      "notes": {
+        "riders_meeting": "オンライン必須",
+        "concurrent_event": "2027 FWT ARAI JUNIOR 1* と同日に開催する場合があります。"
+      }
+    },
+    {
+      "id": "arai-junior",
+      "area": "ARAI",
+      "name": "2027 FWT ARAI JUNIOR 4*",
+      "category": "FREERIDE WORLD TOUR JUNIOR",
+      "stars": 4,
+      "schedule": {
+        "start_date": "2027-02-27",
+        "end_date": "2027-02-28"
+      },
+      "venue": {
+        "name": "ARAI MOUNTAIN RESORT",
+        "address": "新潟県妙高市両善寺1966",
+        "website": "https://www.lottehotel.com/arai-resort/ja/ski-webzine.html",
+        "facebook": "https://www.facebook.com/LOTTEARAIRESORT/",
+        "instagram": "https://www.instagram.com/lottearairesort/",
+        "google_maps": "https://goo.gl/maps/nXi1C3AF6qXVAirBA"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 90,
+        "fee_eur": 110,
+        "selection_method": "シード順",
+        "avalanche_airbag": "推奨（必須ではない）",
+        "age_limit": "10-18"
+      },
+      "notes": {
+        "riders_meeting": "オンライン必須",
+        "concurrent_event": "2027 FWT ARAI QUALIFIER 3*と同日に開催する場合があります。"
+      }
+    },
+    {
+      "id": "niseko-junior",
+      "area": "NISEKO",
+      "name": "2027 FWT NISEKO JUNIOR 1*",
+      "category": "FREERIDE WORLD TOUR JUNIOR",
+      "stars": 1,
+      "schedule": {
+        "start_date": "2027-03-27",
+        "end_date": "2027-03-28"
+      },
+      "venue": {
+        "name": "NISEKO TOKYU",
+        "address": "〒044-0080 北海道虻田郡倶知安町ニセコひらふ1条2丁目9-1",
+        "website": "https://www.grand-hirafu.jp/snow/",
+        "facebook": null,
+        "instagram": "https://www.instagram.com/nisekograndhirafu/?_fsi=dpoHyVaj",
+        "google_maps": "Niseko Tokyu Grand Hirafu"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 80,
+        "fee_eur": 80,
+        "selection_method": "先着順",
+        "avalanche_airbag": "推奨（必須ではない）",
+        "age_limit": "10-18"
+      },
+      "notes": {
+        "riders_meeting": "オンライン必須",
+        "concurrent_event": "2027 FWT NISEKO QUALIFIER 1* と同日に開催する場合があります。"
+      }
+    },
+    {
+      "id": "niseko-qualifier",
+      "area": "NISEKO",
+      "name": "2027 FWT NISEKO QUALIFIER 1*",
+      "category": "FREERIDE WORLD TOUR QUALIFIER",
+      "stars": 1,
+      "schedule": {
+        "start_date": "2027-03-27",
+        "end_date": "2027-03-28"
+      },
+      "venue": {
+        "name": "NISEKO TOKYU",
+        "address": "〒044-0080 北海道虻田郡倶知安町ニセコひらふ1条2丁目9-1",
+        "website": "https://www.grand-hirafu.jp/snow/",
+        "facebook": null,
+        "instagram": "https://www.instagram.com/nisekograndhirafu/?_fsi=dpoHyVaj",
+        "google_maps": "Niseko Tokyu Grand Hirafu"
+      },
+      "entry": {
+        "application_start": "2026-11-01T20:00:00+09:00",
+        "capacity": 100,
+        "fee_eur": 130,
+        "selection_method": "先着順",
+        "avalanche_airbag": "推奨（必須ではない）",
+        "age_limit": null
+      },
+      "notes": {
+        "riders_meeting": "オンライン必須",
+        "concurrent_event": "2027 FWT NISEKO JUNIOR 1* と同日に開催する場合があります。"
+      }
+    }
+  ]

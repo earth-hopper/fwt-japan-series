@@ -1,0 +1,139 @@
+---
+// src/components/Head.astro
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+  noindex?: boolean;
+}
+
+const DEFAULT_TITLE = 'FWT JAPAN SERIES';
+const DEFAULT_DESCRIPTION = '自然のままの地形を滑り、テクニックとスタイルを競うフリーライドの世界一を決めるツアー「FWT JAPAN SERIES」公式ウェブサイト。';
+const DEFAULT_IMAGE = '/img/og-main.jpg';
+
+const {
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
+  type = 'website',
+  image = DEFAULT_IMAGE,
+  schema,
+  noindex = false,
+} = Astro.props;
+
+const formattedTitle = title === DEFAULT_TITLE || title.includes(DEFAULT_TITLE)
+  ? title
+  : `${title} | ${DEFAULT_TITLE}`;
+
+const siteOrigin = Astro.site ? Astro.site.origin : Astro.url.origin;
+const canonicalURL = new URL(Astro.url.pathname, siteOrigin);
+const imageURL = new URL(image, siteOrigin);
+
+const getImageMimeType = (path: string): string => {
+  const extension = path.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'png':
+      return 'image/png';
+    case 'webp':
+      return 'image/webp';
+    default:
+      return 'image/jpeg';
+  }
+};
+const imageType = getImageMimeType(image);
+
+const defaultSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SportsOrganization',
+      '@id': `${siteOrigin}/#organization`,
+      name: DEFAULT_TITLE,
+      url: siteOrigin,
+      logo: `${siteOrigin}/img/logo.webp`,
+      sameAs: [
+        'https://www.instagram.com/freerideworldtour_jp/',
+        'https://x.com/fwt_japan',
+        'https://www.youtube.com/@FreerideWorldTourJapan',
+      ],
+      sport: ['Freeride Skiing', 'Freeride Snowboarding'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteOrigin}/#website`,
+      url: siteOrigin,
+      name: DEFAULT_TITLE,
+      description: DEFAULT_DESCRIPTION,
+      publisher: {
+        '@id': `${siteOrigin}/#organization`,
+      },
+      inLanguage: 'ja',
+    },
+  ],
+};
+---
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5BV2VXM3S8"></script>
+<script is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5BV2VXM3S8');
+</script>
+
+<!-- 基本メタタグ -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{formattedTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+<meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+<meta name="theme-color" content="#020617" />
+
+<!-- OGP / SNS用メタタグ -->
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={formattedTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:site_name" content="FWT JAPAN SERIES" />
+<meta property="og:image" content={imageURL} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content={imageType} />
+
+<!-- X (Twitter) カードタグ -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@fwt_japan" />
+<meta name="twitter:creator" content="@fwt_japan" />
+<meta name="twitter:title" content={formattedTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageURL} />
+
+<!-- アイコン（実アセットが存在するもののみ指定） -->
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+
+<!-- パフォーマンス最適化・フォント・外部CSS -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css"
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+
+<!-- 構造化データ（AEO / 検索エンジン最適化） -->
+<script type="application/ld+json" set:html={JSON.stringify(defaultSchema)} />
+{schema && (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+)}

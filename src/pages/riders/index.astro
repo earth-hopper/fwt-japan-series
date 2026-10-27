@@ -1,0 +1,380 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import rawRiders from '../../data/riders.json';
+import type { Rider } from '../../types/rider';
+
+interface ExtendedRider extends Rider {
+  home_mountain?: string;
+  home_resort?: string;
+  home?: string;
+  point?: string | number;
+}
+
+const pageTitle = "ライダー";
+const pageDescription = "FWT JAPAN SERIESに参戦するフリーライドスキーヤー・スノーボーダーの公式プロフィール一覧。各選手のバイオグラフィ、参戦カテゴリー、過去の戦績や最新ランキング情報を掲載しています。";
+const ogImage = "/img/riders_hero.webp";
+
+// 白背景に調和するミニマルな雪山グラフィックのプレースホルダーSVG
+const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 375' fill='%23f8fafc'%3E%3Crect width='300' height='375' fill='%23f1f5f9'/%3E%3Cpath d='M0 310 L110 180 L180 250 L230 200 L300 310 L300 375 L0 375 Z' fill='%23e2e8f0'/%3E%3Ctext x='50%25' y='46%25' font-family='monospace' font-size='11' font-weight='700' fill='%2394a3b8' letter-spacing='0.2em' text-anchor='middle'%3EFWT ATHLETE%3C/text%3E%3C/svg%3E";
+
+// 種目の日本語マッピング
+const disciplineMap: Record<string, string> = {
+  'ALL': 'すべて',
+  'SKI MEN': 'スキー男子',
+  'SKI WOMEN': 'スキー女子',
+  'SNOWBOARD MEN': 'スノーボード男子',
+  'SNOWBOARD WOMEN': 'スノーボード女子'
+};
+
+const getDisciplineName = (disc: string): string => {
+  if (!disc) return '';
+  return disciplineMap[disc.toUpperCase()] || disc;
+};
+
+// プロフィール画像の有効性チェック
+const getProfileImage = (profile?: string): string => {
+  if (profile && profile.trim() !== '') {
+    return profile;
+  }
+  return PLACEHOLDER_IMG;
+};
+
+// ホームマウンテンの解決
+const getHomeMountain = (r: ExtendedRider): string => {
+  return r.home_mountain || r.home_resort || r.home || '---';
+};
+
+// 1. 画像あり優先、2. 獲得ポイント降順でソート
+const sortedRiders = ([...rawRiders] as ExtendedRider[]).sort((a, b) => {
+  const aBlank = !a.profile || a.profile.trim() === '';
+  const bBlank = !b.profile || b.profile.trim() === '';
+  
+  if (aBlank !== bBlank) return aBlank ? 1 : -1;
+  return (Number(b.point) || 0) - (Number(a.point) || 0);
+});
+
+// 重複のない種目一覧を抽出
+const rawDisciplines = [...new Set(sortedRiders.map((r) => r.discipline).filter(Boolean))].sort();
+const disciplines = ['ALL', ...rawDisciplines];
+
+// ページ固有の構造化データ（Schema.org）
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": pageTitle,
+    "description": pageDescription,
+    "url": "/riders/",
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": sortedRiders.length,
+      "itemListElement": sortedRiders.slice(0, 20).map((r, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "url": `/riders/${r.id}/`,
+        "name": r.rider
+      }))
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "HOME",
+        "item": "/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": pageTitle,
+        "item": "/riders/"
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  image={ogImage}
+  type="website"
+  schema={schema}
+>
+  <!-- ヒーローセクション（デザイン維持） -->
+  <header class="relative w-full h-[280px] sm:h-[320px] md:h-[400px] overflow-hidden flex items-center justify-center text-center px-4">
+    <div class="absolute inset-0">
+      <img
+        src={ogImage}
+        alt="FWT JAPAN SERIES 参戦ライダー"
+        class="w-full h-full object-cover scale-105 transform-gpu"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        width="1920"
+        height="800"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-slate-950/90" aria-hidden="true"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+      <span class="inline-block text-xs sm:text-sm font-black tracking-widest text-red-500 uppercase mb-3 px-3 py-1 bg-black/60 border border-red-500/30 rounded-full backdrop-blur-sm">
+        Athletes & Riders
+      </span>
+      <h1 class="font-extreme text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter uppercase m-0 leading-none drop-shadow-2xl">
+        RIDERS
+      </h1>
+      <p class="mt-3 text-sm sm:text-base md:text-lg font-bold text-slate-200 tracking-wider">
+        参戦選手・公式プロフィール一覧
+      </p>
+    </div>
+  </header>
+
+  <!-- パンくずリストナビゲーション（デザイン維持） -->
+  <nav aria-label="パンくずリスト" class="border-b border-slate-200 bg-slate-50/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16 py-3">
+      <ol class="flex items-center space-x-2 text-xs sm:text-sm text-slate-600">
+        <li>
+          <a
+            href="/"
+            class="hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 py-0.5 transition-colors"
+          >
+            HOME
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-slate-400 select-none">/</li>
+        <li class="font-semibold text-slate-900 truncate" aria-current="page">
+          {pageTitle}
+        </li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- ライダー一覧メインセクション（白背景・余白・構造維持） -->
+  <main class="relative bg-white pt-10 md:pt-16 pb-24 md:pb-32 overflow-hidden border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-16">
+
+      <!-- 種目切り替えボタン（デザイン維持） -->
+      <section aria-label="種目別絞り込み" class="mb-10 md:mb-12">
+        <div id="discipline-filters" role="group" class="flex flex-wrap gap-2.5 sm:gap-3">
+          {disciplines.map((disc) => (
+            <button
+              type="button"
+              data-filter={disc}
+              aria-pressed={disc === 'ALL' ? 'true' : 'false'}
+              class="filter-btn px-4 sm:px-5 py-2 sm:py-2.5 text-xs md:text-sm font-bold tracking-wider border rounded-full transition-all duration-200 outline-none
+                     bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:text-slate-900
+                     aria-pressed:bg-slate-900 aria-pressed:text-white aria-pressed:border-slate-900 aria-pressed:shadow-md
+                     focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            >
+              {getDisciplineName(disc)}
+            </button>
+          ))}
+        </div>
+      </section>
+  
+      <!-- 選手一覧グリッド（5列レイアウト維持 ＋ カードデザイン刷新） -->
+      <ul
+        id="rider-list"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5 md:gap-6 list-none p-0 m-0"
+      >
+        {sortedRiders.map((r) => {
+          const imgPath = getProfileImage(r.profile);
+          const homeMountain = getHomeMountain(r);
+
+          return (
+            <li class="rider-item flex flex-col" data-discipline={r.discipline}>
+              <article class="w-full flex-grow flex flex-col">
+                <a
+                  href={`/riders/${r.id}/`}
+                  class="group relative flex flex-col h-full bg-white border border-slate-200 rounded-none overflow-hidden hover:border-slate-900 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+                >
+                  <!-- 写真領域（縦長4:5プロポーション・ソリッドバッジ） -->
+                  <div class="relative aspect-[4/5] bg-slate-100 overflow-hidden border-b border-slate-100">
+                    <img
+                      src={imgPath}
+                      alt={r.rider ? `${r.rider}のプロフィール写真` : 'ライダー写真'}
+                      loading="lazy"
+                      decoding="async"
+                      width="300"
+                      height="375"
+                      class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+
+                    <!-- 写真上の微細なグラデーション -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity pointer-events-none" aria-hidden="true"></div>
+
+                    <!-- 種目タグ（左上） -->
+                    <span class="absolute top-2 left-2 px-2 py-0.5 bg-slate-900/90 text-white font-mono text-[9px] font-bold tracking-wider uppercase backdrop-blur-xs select-none">
+                      {getDisciplineName(r.discipline)}
+                    </span>
+
+                    <!-- 国籍（右上） -->
+                    {r.nation && (
+                      <span class="absolute top-2 right-2 px-1.5 py-0.5 bg-white/90 text-slate-900 font-mono text-[9px] font-bold tracking-wider uppercase border border-slate-200 select-none">
+                        {r.nation}
+                      </span>
+                    )}
+                  </div>
+
+                  <!-- 選手情報エリア（エディトリアルな左揃えレイアウト） -->
+                  <div class="p-3.5 flex-grow flex flex-col justify-between bg-white relative">
+                    <div>
+                      <span class="block text-[9px] font-mono text-slate-400 uppercase tracking-widest mb-1">
+                        ATHLETE
+                      </span>
+                      <h2 class="font-extreme text-sm sm:text-base font-black text-slate-900 uppercase tracking-tight group-hover:text-red-600 transition-colors line-clamp-1 leading-snug">
+                        {r.rider || 'UNKNOWN DATA'}
+                      </h2>
+                    </div>
+
+                    <!-- ホームマウンテンとホバーアクション -->
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                      <div class="min-w-0 flex-1 pr-2">
+                        <span class="block text-[8px] font-mono text-slate-400 uppercase tracking-wider">HOME MT.</span>
+                        <span class="block text-[11px] font-bold text-slate-700 truncate">{homeMountain}</span>
+                      </div>
+                      <div class="shrink-0 text-slate-300 group-hover:text-red-600 transform group-hover:translate-x-0.5 transition-all text-xs font-mono font-bold" aria-hidden="true">
+                        [+]
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ホバー時に下端で赤く伸長するレーシングライン -->
+                  <div class="absolute bottom-0 left-0 w-0 h-[2px] bg-red-600 group-hover:w-full transition-all duration-300 ease-out z-10" aria-hidden="true"></div>
+                </a>
+              </article>
+            </li>
+          );
+        })}
+      </ul>
+    
+      <!-- 該当なし表示（デザイン維持） -->
+      <div
+        id="no-riders"
+        role="status"
+        aria-live="polite"
+        class="hidden py-16 text-center border border-slate-200 rounded-xl bg-slate-50 mt-6"
+      >
+        <p class="text-sm font-medium tracking-wider text-slate-500">このカテゴリに該当するライダーはいません。</p>
+      </div>
+
+      <!-- さらに読み込むボタン（デザイン維持） -->
+      <div class="mt-12 md:mt-16 text-center">
+        <button
+          id="load-more-btn"
+          type="button"
+          class="inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold tracking-widest bg-white border border-slate-200 text-slate-700 rounded-full px-8 py-3.5 hover:bg-slate-900 hover:text-white hover:border-slate-900 shadow-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+        >
+          <span>さらに読み込む</span>
+          <svg
+            class="w-4 h-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </main>
+</Layout>
+
+<script>
+  function initRiders() {
+    const container = document.getElementById('discipline-filters');
+    const items = document.querySelectorAll<HTMLElement>('.rider-item');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const noRiders = document.getElementById('no-riders');
+
+    if (!items.length) return;
+
+    const ITEMS_PER_PAGE = 20;
+    let currentLimit = ITEMS_PER_PAGE;
+    const buttons = container?.querySelectorAll<HTMLButtonElement>('.filter-btn') ?? [];
+
+    function updateDisplay(targetDiscipline: string) {
+      const newUrl = new URL(window.location.href);
+      if (targetDiscipline === 'ALL') {
+        newUrl.searchParams.delete('discipline');
+      } else {
+        newUrl.searchParams.set('discipline', targetDiscipline);
+      }
+      window.history.replaceState({}, '', newUrl);
+
+      // ARIA 属性を更新（Tailwind の aria-pressed バリアントでスタイル連動）
+      buttons.forEach((btn) => {
+        const isActive = btn.dataset.filter === targetDiscipline;
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+
+      let matchedCount = 0;
+      let displayedCount = 0;
+
+      items.forEach((item) => {
+        const disc = item.dataset.discipline;
+        const isMatch = targetDiscipline === 'ALL' || disc === targetDiscipline;
+
+        if (isMatch) {
+          matchedCount++;
+          const isVisible = matchedCount <= currentLimit;
+          item.classList.toggle('hidden', !isVisible);
+          if (isVisible) displayedCount++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      if (noRiders) {
+        noRiders.classList.toggle('hidden', matchedCount > 0);
+      }
+
+      if (loadMoreBtn) {
+        loadMoreBtn.classList.toggle('hidden', matchedCount <= displayedCount);
+      }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let activeDiscipline = urlParams.get('discipline') || 'ALL';
+
+    updateDisplay(activeDiscipline);
+
+    // イベント委譲によるフィルタクリック処理
+    if (container) {
+      container.onclick = (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.filter-btn');
+        if (btn && btn.dataset.filter) {
+          if (activeDiscipline === btn.dataset.filter) return;
+          activeDiscipline = btn.dataset.filter;
+          currentLimit = ITEMS_PER_PAGE;
+          updateDisplay(activeDiscipline);
+        }
+      };
+    }
+
+    // さらに読み込むボタン
+    if (loadMoreBtn) {
+      loadMoreBtn.onclick = () => {
+        currentLimit += ITEMS_PER_PAGE;
+        updateDisplay(activeDiscipline);
+      };
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRiders);
+  } else {
+    initRiders();
+  }
+  document.addEventListener('astro:page-load', initRiders);
+</script>

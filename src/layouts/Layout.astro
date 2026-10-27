@@ -1,0 +1,76 @@
+---
+// src/layouts/Layout.astro
+import Head from '../components/Head.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  schema?: Record<string, unknown> | Array<Record<string, unknown>>;
+  noindex?: boolean;
+}
+
+const { title, description, image, type, schema, noindex = false } = Astro.props;
+const siteOrigin = Astro.site ? Astro.site.origin : (Astro.url ? Astro.url.origin : 'https://freerideworldtour.jp');
+
+// 組織（SportsOrganization）およびWebサイトの追加詳細構造化データ
+const extendedOrgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsOrganization',
+  '@id': `${siteOrigin}/#organization`,
+  name: 'FWT JAPAN SERIES',
+  alternateName: ['Freeride World Tour Japan Series', 'フリーライド・ワールドツアー・ジャパンシリーズ'],
+  url: siteOrigin,
+  logo: new URL('/img/apple-touch-icon.png', siteOrigin).toString(),
+  sport: ['Freeride Skiing', 'Freeride Snowboarding'],
+  description: 'FREERIDE WORLD TOUR（FWT）の日本シリーズ（FWT JAPAN SERIES）の国内独占運営、および日本におけるフリーライドスキー・フリーライドスノーボード競技の普及・育成。',
+  sameAs: [
+    'https://www.instagram.com/freerideworldtour_jp/',
+    'https://x.com/fwt_japan',
+    'https://www.youtube.com/@FreerideWorldTourJapan',
+  ],
+};
+
+// ページ固有スキーマとマージして Head コンポーネントへ一元委譲
+const combinedSchema = schema
+  ? [extendedOrgSchema, ...(Array.isArray(schema) ? schema : [schema])]
+  : extendedOrgSchema;
+---
+
+<!doctype html>
+<html lang="ja" class="scroll-smooth">
+  <head>
+    <Head
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      schema={combinedSchema}
+      noindex={noindex}
+    />
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans antialiased selection:bg-red-600 selection:text-white">
+    <!-- アクセシビリティ：キーボード操作用スキップリンク -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-red-600 focus:text-white focus:font-bold focus:rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white"
+    >
+      メインコンテンツへスキップ
+    </a>
+
+    <!-- サイト共通ヘッダー -->
+    <Header />
+
+    <!-- メインコンテンツ領域 -->
+    <main id="main-content" class="flex-grow focus:outline-none" tabindex="-1">
+      <slot />
+    </main>
+
+    <!-- サイト共通フッター -->
+    <Footer />
+  </body>
+</html>

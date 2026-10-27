@@ -1,0 +1,283 @@
+---
+// src/components/Header.astro
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface SocialItem {
+  name: string;
+  href: string;
+  viewBox: string;
+  path: string;
+}
+
+const navLinks: NavItem[] = [
+  { label: 'FWTとは', href: '/about' },
+  { label: '大会日程', href: '/series' },
+  { label: 'ランキング', href: '/rankings' },
+  { label: 'ライダー', href: '/riders' },
+  { label: 'リプレイ', href: '/replay' },
+  { label: 'ニュース', href: '/news' },
+];
+
+const socialLinks: SocialItem[] = [
+  {
+    name: 'Instagram',
+    href: 'https://www.instagram.com/freerideworldtour_jp/',
+    viewBox: '0 0 24 24',
+    path: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z',
+  },
+  {
+    name: 'X',
+    href: 'https://x.com/fwt_japan',
+    viewBox: '0 0 1200 1227',
+    path: 'M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z',
+  },
+  {
+    name: 'YouTube',
+    href: 'https://www.youtube.com/@FreerideWorldTourJapan',
+    viewBox: '0 0 24 24',
+    path: 'M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z',
+  },
+];
+---
+
+<header class="relative">
+  <nav
+    id="navbar"
+    class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex items-center px-6 md:px-10 justify-between h-20 text-white bg-gradient-to-b from-black/60 via-black/25 to-transparent drop-shadow-sm"
+    aria-label="メインナビゲーション"
+  >
+    <!-- ロゴ -->
+    <a
+      href="/"
+      class="flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded py-1"
+      aria-label="FWT JAPAN SERIES トップページへ"
+    >
+      <img
+        loading="eager"
+        decoding="async"
+        src="/img/logo.webp"
+        alt="FWT JAPAN SERIES"
+        class="h-[36px] w-auto object-contain filter drop-shadow-sm transition-transform duration-200 hover:scale-[1.02]"
+      />
+    </a>
+
+    <!-- デスクトップナビゲーション -->
+    <div class="hidden xl:flex items-center gap-2 text-[15px] font-semibold tracking-wider">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="px-3.5 py-2 uppercase hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+
+    <!-- デスクトップユーティリティ（SNS・CTA） -->
+    <div class="hidden xl:flex items-center gap-5">
+      <div class="flex items-center gap-3 mr-1">
+        {socialLinks.map((social) => (
+          <a
+            href={social.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:opacity-75 transition-opacity p-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
+            aria-label={`${social.name}（新規タブで開く）`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 drop-shadow-sm"
+              viewBox={social.viewBox}
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d={social.path} />
+            </svg>
+          </a>
+        ))}
+      </div>
+      <a
+        href="/zone"
+        class="px-5 py-2.5 text-xs font-bold tracking-widest uppercase text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-300 shadow-md shadow-red-600/30 hover:shadow-red-600/50 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+      >
+        体験しよう
+      </a>
+    </div>
+
+    <!-- モバイルハンバーガーボタン -->
+    <button
+      id="menu-toggle"
+      type="button"
+      class="xl:hidden flex items-center justify-center w-10 h-10 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+      aria-label="メニューを開く"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <svg
+        id="icon-menu"
+        class="w-6 h-6 block drop-shadow-sm"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg
+        id="icon-close"
+        class="w-6 h-6 hidden"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- モバイルメニューオーバーレイ -->
+  <div
+    id="mobile-menu"
+    class="fixed inset-0 z-40 bg-slate-900/95 backdrop-blur-md text-white flex flex-col items-center justify-center gap-6 p-8 transition-opacity duration-300 opacity-0 pointer-events-none xl:hidden"
+    aria-hidden="true"
+    aria-label="モバイルナビゲーション"
+  >
+    <nav class="flex flex-col items-center gap-6">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="mobile-nav-link text-lg font-medium tracking-widest uppercase hover:text-red-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-2 py-1"
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-6 mt-4">
+      {socialLinks.map((social) => (
+        <a
+          href={social.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:opacity-70 transition-opacity p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
+          aria-label={`${social.name}（新規タブで開く）`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6"
+            viewBox={social.viewBox}
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d={social.path} />
+          </svg>
+        </a>
+      ))}
+    </div>
+
+    <div class="flex flex-col gap-4 mt-6 w-full max-w-[240px]">
+      <a
+        href="/zone"
+        class="mobile-nav-link flex justify-center px-8 py-3 text-sm font-semibold tracking-widest uppercase text-white bg-red-600 hover:bg-red-700 rounded-full transition-all duration-300 shadow-md shadow-red-600/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+      >
+        体験しよう
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const setupHeader = () => {
+    const navbar = document.getElementById('navbar');
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const iconMenu = document.getElementById('icon-menu');
+    const iconClose = document.getElementById('icon-close');
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+    if (!navbar || !menuToggle || !mobileMenu) return;
+
+    const scrolledClasses = [
+      'bg-white/95',
+      'backdrop-blur-md',
+      'text-slate-900',
+      'shadow-md',
+      'border-b',
+      'border-slate-100',
+      'h-16',
+    ];
+    const defaultClasses = [
+      'text-white',
+      'bg-gradient-to-b',
+      'from-black/60',
+      'via-black/25',
+      'to-transparent',
+      'drop-shadow-sm',
+      'h-20',
+    ];
+
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 40) {
+            navbar.classList.add(...scrolledClasses);
+            navbar.classList.remove(...defaultClasses);
+          } else {
+            navbar.classList.remove(...scrolledClasses);
+            navbar.classList.add(...defaultClasses);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    const setMenuOpen = (isOpen: boolean) => {
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+      mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+
+      if (isOpen) {
+        mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = 'hidden';
+        iconMenu?.classList.replace('block', 'hidden');
+        iconClose?.classList.replace('hidden', 'block');
+      } else {
+        mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = '';
+        iconMenu?.classList.replace('hidden', 'block');
+        iconClose?.classList.replace('block', 'hidden');
+      }
+    };
+
+    menuToggle.addEventListener('click', () => {
+      const isCurrentlyOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+      setMenuOpen(!isCurrentlyOpen);
+    });
+
+    mobileLinks.forEach((link) => {
+      link.addEventListener('click', () => setMenuOpen(false));
+    });
+
+    window.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') {
+        setMenuOpen(false);
+        menuToggle.focus();
+      }
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', setupHeader);
+  document.addEventListener('astro:page-load', setupHeader);
+</script>
