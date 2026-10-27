@@ -2,9 +2,9 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
-// https://astro.build/config
 export default defineConfig({
-  site: 'https://freerideworldtour.jp', // ← ここに追加
+  site: 'https://earth-hopper.github.io',
+  base: 'fwt-japan-series', // 例: '/fwt-site'
   vite: {
     plugins: [tailwindcss()]
   }
