@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 
 const pageTitle = "体験しよう (ZONE FWT)";
 const pageDescription = "フリーライドスキー・スノーボードの魅力を体感できる、FWT JAPAN公認のフリーライド向けコース「ZONE FWT」を紹介しています。全国のスキー場にある自然地形コース一覧。";
-const ogImage = "/img/zone_hero.webp";
+const ogImage = "/img/zone/hero.webp";
 
 const siteUrl = Astro.site?.toString() ?? "https://freerideworldtour.jp";
 const pageUrl = new URL(Astro.url.pathname, siteUrl).toString();
@@ -20,7 +20,7 @@ const courses = [
     name: "カムイスキーリンクス",
     course: "ディープパウダーコース",
     slope: "800m / 32°",
-    image: "/img/zone_kamui.webp",
+    image: "/img/zone/kamui.webp",
     desc: "旭川の極上パウダーが楽しみながらオープンバーンとツリーランを同じ１本のランで楽しめる数少ないコース設計でFREERIDEが体感できる。"
   },
   {
@@ -31,7 +31,7 @@ const courses = [
     name: "ホワイトワールド尾瀬岩鞍",
     course: "エキスパートコース（上部）",
     slope: "250m / 40°",
-    image: "/img/zone_ozeiwakura.webp",
+    image: "/img/zone/ozeiwakura.webp",
     desc: "幅広で遮るもののないコースは縦横無尽な滑走が可能。急斜だがうねりも少なく、FREERIDEとしての経験値を積むのに最適。"
   },
   {
@@ -42,7 +42,7 @@ const courses = [
     name: "オグナほたかスキー場",
     course: "トレーニングコース",
     slope: "400m / 30°",
-    image: "/img/zone_oguna.webp",
+    image: "/img/zone/oguna.webp",
     desc: "リフトからのアクセスが大変良く、体力を削られずに何度でも楽しめる。ZONE FWTの中では比較的滑りやすいので、ここからFREERIDEへの第一歩を踏み出そう。"
   },
   {
@@ -53,7 +53,7 @@ const courses = [
     name: "舞子スノーリゾート",
     course: "チャンピオンコース",
     slope: "120m / 30°",
-    image: "/img/zone_maiko.webp",
+    image: "/img/zone/maiko.webp",
     desc: "過去にはFWT Qualifier 1*を実施していた斜面であり、フリーライドデビューに好条件な斜面。ぜひフリーライドを体感したことがない方に訪れてほしい。"
   },
   {
@@ -64,7 +64,7 @@ const courses = [
     name: "湯沢中里スノーリゾート",
     course: "チャレンジバーン",
     slope: "370m / 32°",
-    image: "/img/zone_nakazato.webp",
+    image: "/img/zone/nakazato.webp",
     desc: "滑り切った後に自分のラインがどこを通ったのかが分かりやすい斜面。複数設置されたナチュラルヒットアイテムにより、チャレンジ精神をくすぐられるレイアウトとなっている。"
   },
   {
@@ -75,7 +75,7 @@ const courses = [
     name: "アライスノーリゾート",
     course: "マムシ",
     slope: "720m / 30°",
-    image: "/img/zone_arai.webp",
+    image: "/img/zone/arai.webp",
     desc: "FWT Qualifier 3*開催地をリフトで回せるという例のない環境。マップ上は小さなコースに見えるが、足を運ぶと想像以上に大きなフェイスが待っている。"
   },
   {
@@ -86,7 +86,7 @@ const courses = [
     name: "竜王スキーパーク",
     course: "木落しBowl a",
     slope: "1,410m / 23°",
-    image: "/img/zone_kv.webp",
+    image: "/img/zone/kv.webp",
     desc: "言わずと知れた名物コースに新たなツリーランコースが誕生！サーフライドが楽しめる沢地形エリアもあり波乗り感覚で自由なラインを描けるので、何度でも違った遊び方が可能。"
   },
   {
@@ -97,7 +97,7 @@ const courses = [
     name: "御嶽スキー場",
     course: "チャンピオンゲレンデ",
     slope: "1,500m / 30°",
-    image: "/img/zone_ontake.webp",
+    image: "/img/zone/ontake.webp",
     desc: "10年ぶりに復活した旧ゲレンデ、BCデビューを考える方におすすめ。現在はリフトが稼働していないが、バスで送迎してくれる高待遇でコンペティターの気分に。"
   },
   {
@@ -108,7 +108,7 @@ const courses = [
     name: "高鷲スノーパーク",
     course: "チャンピオンコース",
     slope: "2,250m / 40°",
-    image: "/img/zone_takasu.webp",
+    image: "/img/zone/takasu.webp",
     desc: "未圧雪・コブ斜面。コースはうねっており非常に難しい。ゲレンデのもっとも南に位置し、日当たりの影響で雪質も刻一刻と変化する。初級者は絶対に立ち入らないよう要注意！"
   },
   {
@@ -119,7 +119,7 @@ const courses = [
     name: "ハチ・ハチ北スキー場",
     course: "FWT ZONE NATURE",
     slope: "300m / 35°",
-    image: "/img/zone_hachi.webp",
+    image: "/img/zone/hachi.webp",
     desc: "関西No.1ゲレンデ規模ながら、雪面コンディションが著しく変化することを予測してドロップする場所を選ぶ。これもFREERIDEの醍醐味である。"
   },
   {
@@ -130,7 +130,7 @@ const courses = [
     name: "恐羅漢スノーパーク",
     course: "砥石郷コース",
     slope: "600m / 38°",
-    image: "/img/zone_osorakan.webp",
+    image: "/img/zone/osorakan.webp",
     desc: "山陽の中でも特に自然降雪に恵まれ、山の規模感もFREERIDEを楽しむには文句なし。コース途中から片斜面でのトラバースを意識してコースバックしよう。"
   }
 ];
@@ -248,7 +248,7 @@ const schema = [
         <div class="w-full lg:w-7/12 order-1 lg:order-2">
           <figure class="relative shadow-2xl overflow-hidden rounded-sm group m-0 bg-slate-200">
             <img 
-              src="/img/zone_kv.webp" 
+              src="/img/zone/kv.webp" 
               alt="ZONE FWT公認コースでのフリーライドイメージ" 
               class="w-full h-auto object-cover group-hover:scale-[1.03] transition-transform duration-1000 ease-out"
               loading="lazy"

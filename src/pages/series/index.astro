@@ -30,7 +30,7 @@ interface EventItem {
 
 const pageTitle = "大会日程";
 const pageDescription = "FWT JAPAN SERIESの年間ツアースケジュール一覧。白馬をはじめとする各開催地の大会日程、エントリー期間、競技種目（スキー・スノーボード）、会場アクセス、当日のタイムスケジュール情報を掲載しています。";
-const ogImage = "/img/series_hero.webp";
+const ogImage = "/img/series/hero.webp";
 
 // サイトURLと絶対URLの組み立て
 const siteUrl = Astro.site?.toString() ?? "https://freerideworldtour.jp";
@@ -61,7 +61,7 @@ const sortedEvents: EventItem[] = eventsData
     startDate: event.schedule.start_date,
     endDate: event.schedule.end_date,
     dateText: formatDateRange(event.schedule.start_date, event.schedule.end_date),
-    imagePath: `/img/series_${event.area.toLowerCase()}.webp`,
+    imagePath: `/img/series/${event.area.toLowerCase()}.webp`,
   }))
   .sort((a, b) => a.startDate.localeCompare(b.startDate));
 

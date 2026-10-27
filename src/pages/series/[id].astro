@@ -63,7 +63,7 @@ const RULEBOOKS = [
 
 const starString = '★'.repeat(event.stars);
 const categoryLabel = event.category.replace('FREERIDE WORLD TOUR ', '');
-const heroImage = `/img/series_${event.area.toLowerCase().replace(/\s+/g, '_')}.webp`;
+const heroImage = `/img/series/${event.area.toLowerCase().replace(/\s+/g, '_')}.webp`;
 
 const siteUrl = Astro.site?.toString() ?? "https://freerideworldtour.jp";
 const canonicalEventURL = new URL(Astro.url.pathname, siteUrl).toString();
@@ -159,7 +159,7 @@ const isAirbagRequired = event.entry.avalanche_airbag === '必須' || event.entr
         fetchpriority="high"
         width="1920"
         height="800"
-        onerror="this.onerror=null;this.src='/img/series_hero.webp';"
+        onerror="this.onerror=null;this.src='/img/series/hero.webp';"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" aria-hidden="true"></div>
     </div>

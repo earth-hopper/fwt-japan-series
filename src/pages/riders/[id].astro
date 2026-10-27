@@ -53,7 +53,7 @@ const pageTitle = rider.rider;
 const pageDescription = `${rider.rider}（${getDisciplineName(rider.discipline)} / ${rider.nation}）のFWT JAPAN SERIES 公式プロフィール、戦績、獲得ポイント詳細ページです。`;
 
 // OGP画像（ライディング写真があれば優先、なければプロフィール写真、どちらもなければ共通OGP）
-const heroImage = !isBlankImage(rider.riding) ? rider.riding : (!isBlankImage(rider.profile) ? rider.profile : '/img/riders_hero.webp');
+const heroImage = !isBlankImage(rider.riding) ? rider.riding : (!isBlankImage(rider.profile) ? rider.profile : '/img/riders.webp');
 const ogImage = heroImage;
 
 // --- JSON-LD (Person / BreadcrumbList) の生成 ---
