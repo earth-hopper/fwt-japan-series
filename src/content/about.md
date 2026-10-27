@@ -21,8 +21,7 @@
 
 <div class="my-6 not-prose">
   <a 
-    href="https://prtimes.jp/main/html/rd/p/000000084.000058216.html"
-    target="_blank"
+    href="/news/20260708/"
     class="group flex items-center justify-between w-full py-4 px-6 bg-slate-50 hover:bg-slate-900 border border-slate-200 hover:border-slate-900 transition-colors duration-300 no-underline"
   >
     <div class="flex items-center gap-3">
@@ -120,23 +119,6 @@ QUALIFIERを勝ち上がった勝者と、PROからの降格者が激突するPR
 
 競技エリアに入る全ライダーに「ヘルメット、アバランチビーコン、ショベル＆プローブ、バックプロテクター、バックパック」の携行を義務付け、雪崩対策を学ぶセーフティワークショップや事前ミーティングへの参加を必須としています。転倒による板の外れは「ノー・スコア」、進入禁止エリアへの侵入は即座に「失格」。安全を最優先する毅然としたペナルティが、この競技の誇りでもあります。
 
-<div class="my-6 not-prose">
-  <a 
-    href="/series" 
-    class="group flex items-center justify-between w-full py-4 px-6 bg-slate-50 hover:bg-slate-900 border border-slate-200 hover:border-slate-900 transition-colors duration-300 no-underline"
-  >
-    <div class="flex items-center gap-3">
-      <span class="w-4 h-[2px] bg-red-600"></span>
-      <span class="font-bold text-slate-900 group-hover:text-white text-sm md:text-base transition-colors">
-        安全基準について
-      </span>
-    </div>
-    <div class="text-slate-400 group-hover:text-red-500 transform group-hover:translate-x-1 transition-all duration-300">
-      <i class="ri-arrow-right-line text-xl md:text-2xl"></i>
-    </div>
-  </a>
-</div>
-
 ![自然環境への配慮と安全を重んじるFWTの取り組み](/img/sustainability_hero.webp)
 
 ### 5. 歴史的なマイルストーン
@@ -159,7 +141,7 @@ FWTの物語は1996年、スイスの断崖絶壁「Bec des Rosses」に集ま�
 
 <div class="my-6 not-prose">
   <a 
-    href="/series" 
+    href="/rankings" 
     class="group flex items-center justify-between w-full py-4 px-6 bg-slate-50 hover:bg-slate-900 border border-slate-200 hover:border-slate-900 transition-colors duration-300 no-underline"
   >
     <div class="flex items-center gap-3">
@@ -195,7 +177,7 @@ FWTの物語は1996年、スイスの断崖絶壁「Bec des Rosses」に集ま�
 
 <div class="my-6 not-prose">
   <a 
-    href="/series" 
+    href="/zone" 
     class="group flex items-center justify-between w-full py-4 px-6 bg-slate-50 hover:bg-slate-900 border border-slate-200 hover:border-slate-900 transition-colors duration-300 no-underline"
   >
     <div class="flex items-center gap-3">

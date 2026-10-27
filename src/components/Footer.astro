@@ -95,6 +95,7 @@ const navLinks = [
 const legalLinks = [
   { label: '運営団体', href: '/team.html' },
   { label: '利用規約', href: '/policy.html' },
+  { label: 'お問い合わせ', href: 'https://forms.gle/iWdSzx2iMYZziy9X8', target: '_blank' },
 ];
 
 const tickerText = 'FWT JAPAN SERIES // FREERIDE WORLD TOUR // DROP IN // JUST SEND IT // HAKUBA TO NISEKO // JAPOW // LINE // FLUIDITY // CONTROL // AIR & STYLE // TECHNIQUE // MOUNTAIN // ZONE //';
@@ -260,6 +261,7 @@ const tickerText = 'FWT JAPAN SERIES // FREERIDE WORLD TOUR // DROP IN // JUST S
       {legalLinks.map((link) => (
         <a
           href={link.href}
+          target={link.target}
           class="hover:text-slate-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded"
         >
           {link.label}
