@@ -21,7 +21,7 @@
         "application_start": "2026-11-01T20:00:00+09:00",
         "capacity": 70,
         "fee_eur": 90,
-        "selection_method": "シード順",
+        "selection_method": "シード順（U15は先着順）",
         "avalanche_airbag": "推奨（必須ではない）",
         "age_limit": "10-18"
       },
@@ -207,8 +207,8 @@
         "application_start": "2026-11-01T20:00:00+09:00",
         "capacity": 90,
         "fee_eur": 110,
-        "selection_method": "シード順",
-        "avalanche_airbag": "推奨（必須ではない）",
+        "selection_method": "シード順（U15は先着順）",
+        "avalanche_airbag": "必須",
         "age_limit": "10-18"
       },
       "notes": {
