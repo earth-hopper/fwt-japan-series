@@ -16,6 +16,7 @@ interface EventEntry {
   selection_method: string;
   avalanche_airbag: string;
   fee_eur: number | string;
+  liveheats_url: string;
 }
 
 interface EventSchedule {
@@ -409,7 +410,7 @@ const isAirbagRequired = event.entry.avalanche_airbag === '必須' || event.entr
               <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">1イベントのみ出場の場合</div>
               <div class="flex items-baseline gap-3 mb-5">
                 <h3 class="font-black text-slate-900 text-xl m-0">One Event</h3>
-                <span class="font-mono text-3xl font-black text-slate-900">€25</span>
+                <span class="font-mono text-3xl font-black text-slate-900">€39</span>
               </div>
               <ul class="text-xs font-medium text-slate-600 space-y-2 list-none p-0 m-0">
                 <li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-1.5 before:w-1 before:h-1 before:bg-slate-400 before:rounded-full">いかなる場合も返金不可</li>
@@ -422,7 +423,7 @@ const isAirbagRequired = event.entry.avalanche_airbag === '必須' || event.entr
               <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">2イベント以上出場の場合</div>
               <div class="flex items-baseline gap-3 mb-5">
                 <h3 class="font-black text-slate-900 text-xl m-0">Tour</h3>
-                <span class="font-mono text-3xl font-black text-slate-900">€70</span>
+                <span class="font-mono text-3xl font-black text-slate-900">€109</span>
               </div>
               <ul class="text-xs font-medium text-slate-600 space-y-2 list-none p-0 m-0">
                 <li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-1.5 before:w-1 before:h-1 before:bg-slate-400 before:rounded-full">一度も出場できず、2027年5月15日までに問合せがあった場合のみ返金可</li>
@@ -439,12 +440,38 @@ const isAirbagRequired = event.entry.avalanche_airbag === '必須' || event.entr
         </div>
       </section>
 
-      <!-- エントリー開始告知バー -->
+      <!-- エントリー受付（Liveheatsボタン & アラート） -->
       <section aria-label="エントリー受付" class="py-16 md:py-24 text-center border-b border-slate-200">
-        <div class="inline-flex flex-col items-center justify-center">
-          <div class="text-lg md:text-2xl font-black tracking-widest uppercase text-slate-300 mb-3">
-            2026年11月1日にエントリー開始
-          </div>
+        <div class="inline-flex flex-col items-center justify-center max-w-2xl mx-auto px-4 w-full">
+
+          <span class="font-mono text-xs font-bold text-slate-400 tracking-[0.2em] uppercase block mb-3">
+            Entry Registration
+          </span>
+
+          <a
+            href={event.entry.liveheats_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center justify-center gap-3 px-10 md:px-14 py-4 md:py-5 bg-slate-900 text-white font-black text-sm md:text-base tracking-widest uppercase hover:bg-red-600 transition-colors duration-300 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+          >
+            <span>LiveHeats でエントリーする</span>
+            <svg 
+              class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              stroke-width="2.5" 
+              stroke-linecap="round" 
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+
+          <p class="text-xs font-medium text-slate-500 mt-4 m-0">
+            ※外部プラットフォーム「LiveHeats」のアカウントが必要です。
+          </p>
         </div>
       </section>
 
@@ -488,11 +515,11 @@ const isAirbagRequired = event.entry.avalanche_airbag === '必須' || event.entr
               </p>
               <ul class="text-xs font-bold text-slate-900 space-y-2 list-none p-0 m-0">
                 <li class="flex flex-col sm:flex-row gap-1">
-                  <span class="text-slate-400 font-medium w-28">クオリファイアー:</span>
+                  <span class="text-slate-400 font-medium w-28">Qualifier:</span>
                   <a href="mailto:qualifiers@freerideworldtour.com" class="hover:text-red-600 transition-colors">qualifiers@freerideworldtour.com</a>
                 </li>
                 <li class="flex flex-col sm:flex-row gap-1">
-                  <span class="text-slate-400 font-medium w-28">ジュニア:</span>
+                  <span class="text-slate-400 font-medium w-28">Junior:</span>
                   <a href="mailto:juniors@freerideworldtour.com" class="hover:text-red-600 transition-colors">juniors@freerideworldtour.com</a>
                 </li>
               </ul>

@@ -50,7 +50,7 @@ FWTは単なる競技大会にとどまらず、大自然への畏敬の念を�
 
 ### 2. ジャッジ基準
 
-FWTのジャッジ基準の最大の理念は、「**ライダーがシステムに合わせるのではなく、システムがフリーライドに適応する**」こと。世界共通のライセンスを持つプロフェッショナルなジャッジ陣が、以下の5つの厳格な基準に基づき、0〜100点のポイント制で滑走の「総合的な印象」を評価します。
+FWTのジャッジ基準の最大の理念は、「**ライダーがジャッジ基準に合わせるのではなく、ジャッジ基準がフリーライドに適応する**」こと。世界共通のライセンスを持つプロフェッショナルなジャッジ陣が、以下の5つの厳格な基準に基づき、0〜100点のポイント制で滑走の「総合的な印象」を評価します。
 
 | 評価項目 | 評価内容 |
 |---|---|
@@ -92,19 +92,19 @@ QUALIFIERを勝ち上がった勝者と、PROからの降格者が激突するPR
 ></iframe>
 
 **【4つのスターと日本での展開】**
-ピラミッドの土台となる「QUALIFIER」の大会は、難易度や規模に応じて1から4の「スター（*）」で分類されます。星の数が増えるほど斜面の難易度は上がり、得られるポイントも飛躍的に高くなります（例：1スターの優勝は600pts、4スターは2500pts）。
+ピラミッドの土台となる「QUALIFIER」と「JUNIOR」の大会は、難易度や規模に応じて1から4の「スター（*）」で分類されます。スターの数が増えるほど斜面の難易度は上がり、得られるポイントも飛躍的に高くなります（例：1スターの優勝は600pts、4スターは2500pts）。
 
 日本国内の「**FWT JAPAN SERIES**」では、この基盤となるQUALIFIERとJUNIORの大会を開催しており、誰でも1スターから挑戦し、着実にステップアップしていける環境が整えられています。
 
 <div class="my-6 not-prose">
   <a 
-    href="/series" 
+    href="/about/entry" 
     class="group flex items-center justify-between w-full py-4 px-6 bg-slate-50 hover:bg-slate-900 border border-slate-200 hover:border-slate-900 transition-colors duration-300 no-underline"
   >
     <div class="flex items-center gap-3">
       <span class="w-4 h-[2px] bg-red-600"></span>
       <span class="font-bold text-slate-900 group-hover:text-white text-sm md:text-base transition-colors">
-        大会日程について
+        FWTへ初参戦する方へ
       </span>
     </div>
     <div class="text-slate-400 group-hover:text-red-500 transform group-hover:translate-x-1 transition-all duration-300">
@@ -117,7 +117,7 @@ QUALIFIERを勝ち上がった勝者と、PROからの降格者が激突するPR
 
 過酷な大自然を舞台にする以上、フリーライドは常に危険と隣り合わせです。だからこそFWTでは、競技者の命を守る極めて厳格なルールを敷いています。
 
-競技エリアに入る全ライダーに「ヘルメット、アバランチビーコン、ショベル＆プローブ、バックプロテクター、バックパック」の携行を義務付け、雪崩対策を学ぶセーフティワークショップや事前ミーティングへの参加を必須としています。転倒による板の外れは「ノー・スコア」、進入禁止エリアへの侵入は即座に「失格」。安全を最優先する毅然としたペナルティが、この競技の誇りでもあります。
+競技エリアに入る全ライダーに「ヘルメット、アバランチビーコン、ショベル＆プローブ、バックプロテクター、バックパック」の携行を義務付け、雪崩対策を学ぶセーフティワークショップや事前ミーティングへの参加を必須としています。転倒による板の外れはノー・スコア、進入禁止エリアへの侵入は即座に失格。安全を最優先する毅然としたペナルティが、この競技の誇りでもあります。
 
 ![自然環境への配慮と安全を重んじるFWTの取り組み](/img/safety.webp)
 
@@ -133,11 +133,11 @@ FWTの物語は1996年、スイスの断崖絶壁「Bec des Rosses」に集ま�
 
 # FWT JAPAN SERIES
 
-日本国内における競技振興を統括する公式シリーズが「**FWT JAPAN SERIES**」です。2017年に白馬村で初開催されて以来、年々熱狂の渦は大きくなり、2027年シーズンには約700名規模の出場者を誇る国際的なビッグイベントへと急成長を遂げました。同シーズンからは、日本を代表する2大スノーリゾートを舞台に「白馬に始まり、ニセコに終わる」という極上のサーキットが幕を開けます。
+日本国内における競技振興を統括する公式シリーズが「**FWT JAPAN SERIES**」です。2017年に白馬村で初開催されて以来、年々熱狂の渦は大きくなり、2027年シーズンには約700名規模の出場者を誇る国際的なビッグイベントへと急成長を遂げました。同シーズンからは、日本を代表する2大スノーリゾートを舞台に「白馬に始まり、ニセコに終わる」というサーキットが幕を開けます。
 
 ![FWT JAPAN SERIESの大会風景](/img/about_1.webp)
 
-本シリーズの最大の意義は、国内にいながら「世界基準のFWTポイント」を獲得し、ピラミッドを駆け上がる環境があることです。さらに、FWTグローバル・エコシステムの一部として機能するだけでなく、JAPAN SERIES独自のポイントで競い合う「JAPAN RANKING」が存在し、国内での熾烈なタイトル争いも展開されます。
+本シリーズの最大の意義は、国内にいながら「世界基準のFWTポイント」を獲得し、ピラミッドを駆け上がる環境があることです。さらに、FWTグローバル・エコシステムの一部として機能するだけでなく、FWT JAPAN SERIES独自のポイントで競い合う「FWT JAPAN RANKING」が存在し、国内での熾烈な争いも展開されます。
 
 <div class="my-6 not-prose">
   <a 
@@ -166,6 +166,35 @@ FWTの物語は1996年、スイスの断崖絶壁「Bec des Rosses」に集ま�
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
   allowfullscreen
 ></iframe>
+
+<div class="my-16 not-prose">
+<a href="/series" class="group relative block overflow-hidden rounded-xl border border-slate-900 bg-slate-950 p-6 sm:p-8 md:p-10 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 no-underline">
+<div class="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-red-600/20 blur-3xl transition-transform duration-500 group-hover:scale-150" aria-hidden="true"></div>
+<div class="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,0.03)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true"></div>
+<div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+<div class="space-y-2">
+<div class="flex items-center gap-2 font-mono text-[11px] sm:text-xs font-bold tracking-[0.2em] text-red-500 uppercase">
+<span class="inline-block h-1.5 w-6 bg-red-600"></span>
+Ready to Compete?
+</div>
+<div class="font-extreme text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white m-0 leading-tight">
+FWTへ参戦しよう
+</div>
+<p class="text-xs sm:text-sm md:text-base text-slate-300 font-medium tracking-wide m-0">
+各開催地の大会日程と募集情報をチェック
+</p>
+</div>
+<div class="flex items-center gap-3 shrink-0 self-start md:self-center">
+<span class="inline-flex items-center gap-3 bg-red-600 group-hover:bg-red-500 text-white font-bold text-xs sm:text-sm tracking-widest uppercase px-6 py-3.5 rounded-full shadow-lg transition-all duration-300 group-hover:shadow-red-600/30">
+<span>大会日程一覧を見る</span>
+<svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+<path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z"/>
+</svg>
+</span>
+</div>
+</div>
+</a>
+</div>
 
 ---
 
